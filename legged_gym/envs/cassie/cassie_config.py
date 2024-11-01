@@ -103,7 +103,7 @@ class CassieRoughCfgPPO( LeggedRobotCfgPPO ):
     
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        experiment_name = 'rough_cassie'
+        experiment_name = 'cassie'
 
     class algorithm( LeggedRobotCfgPPO.algorithm):
         entropy_coef = 0.01
