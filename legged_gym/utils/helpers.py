@@ -38,6 +38,16 @@ from isaacgym import gymutil
 
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 
+
+def to_str_dict(input_dict):
+    for key, val in input_dict.items():
+        if isinstance(val, dict):
+            to_str_dict(val)
+        else:
+            input_dict[key] = str(val)
+    return input_dict
+
+
 def class_to_dict(obj) -> dict:
     if not  hasattr(obj,"__dict__"):
         return obj

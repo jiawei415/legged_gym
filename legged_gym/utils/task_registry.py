@@ -33,12 +33,13 @@ from datetime import datetime
 from typing import Tuple
 import torch
 import numpy as np
+import json
 
 from rsl_rl.env import VecEnv
 from rsl_rl.runners import OnPolicyRunner
 
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
-from .helpers import get_args, update_cfg_from_args, class_to_dict, get_load_path, set_seed, parse_sim_params
+from .helpers import get_args, update_cfg_from_args, class_to_dict, get_load_path, set_seed, parse_sim_params, to_str_dict
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 class TaskRegistry():
@@ -61,7 +62,23 @@ class TaskRegistry():
         # copy seed
         env_cfg.seed = train_cfg.seed
         return env_cfg, train_cfg
-    
+
+    def save_cfgs(self, args, env_cfg, train_cfg):
+        with open(os.path.join(self.log_dir, "params.json"), "wt") as f:
+            f.write(
+                json.dumps(
+                    {
+                        "user_cfg": to_str_dict(class_to_dict(args)),
+                        "env_cfg": to_str_dict(class_to_dict(env_cfg)),
+                        "train_cfg": to_str_dict(class_to_dict(train_cfg)),
+                    },
+                    indent=4,
+                )
+                + "\n"
+            )
+            f.flush()
+            f.close()
+
     def make_env(self, name, args=None, env_cfg=None) -> Tuple[VecEnv, LeggedRobotCfg]:
         """ Creates an environment either from a registered namme or from the provided config file.
 
@@ -141,8 +158,8 @@ class TaskRegistry():
         elif log_root is None:
             log_dir = None
         else:
-            log_root = os.path.join(log_root, train_cfg.runner.experiment_name)
             log_dir = os.path.join(log_root, datetime.now().strftime('%Y%m%d') + '_' + train_cfg.runner.run_name)
+        self.log_dir = log_dir
         
         train_cfg_dict = class_to_dict(train_cfg)
         runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)
