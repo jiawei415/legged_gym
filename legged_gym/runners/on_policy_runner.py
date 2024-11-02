@@ -137,7 +137,7 @@ class OnPolicyRunner:
             if self.log_dir is not None:
                 self.log(locals())
             if it % self.save_interval == 0:
-                self.save(os.path.join(self.log_dir, f"model_{it}_{time.strftime('%Y%m%d%H%M%S')}.pt"))
+                self.save(os.path.join(self.log_dir, f"model_{str(it).zfill(len(tot_iter))}_{time.strftime('%Y%m%d%H%M%S')}.pt"))
             ep_infos.clear()
         
         self.current_learning_iteration += num_learning_iterations
