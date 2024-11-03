@@ -101,6 +101,7 @@ class OnPolicyRunner:
         cur_episode_length = torch.zeros(self.env.num_envs, dtype=torch.float, device=self.device)
 
         tot_iter = self.current_learning_iteration + num_learning_iterations
+        len_iter = len(str(tot_iter))
         for it in range(self.current_learning_iteration, tot_iter):
             start = time.time()
             # Rollout
@@ -137,7 +138,7 @@ class OnPolicyRunner:
             if self.log_dir is not None:
                 self.log(locals())
             if it % self.save_interval == 0:
-                self.save(os.path.join(self.log_dir, f"model_{str(it).zfill(len(tot_iter))}_{time.strftime('%Y%m%d%H%M%S')}.pt"))
+                self.save(os.path.join(self.log_dir, f"model_{str(it).zfill(len_iter)}_{time.strftime('%Y%m%d%H%M%S')}.pt"))
             ep_infos.clear()
         
         self.current_learning_iteration += num_learning_iterations

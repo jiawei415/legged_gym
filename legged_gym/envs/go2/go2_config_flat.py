@@ -34,6 +34,7 @@ class Go2FlatCfg( Go2Cfg ):
     class terrain( Go2Cfg.terrain ):
         mesh_type = 'plane' # "heightfield" # none, plane, heightfield or trimesh
 
-class GoFlatCfgPPO( Go2CfgPPO ):
+class Go2FlatCfgPPO( Go2CfgPPO ):
     class runner( Go2CfgPPO.runner ):
         experiment_name = 'go_flat'
+        max_iterations = 300

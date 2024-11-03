@@ -15,7 +15,7 @@
         <visual>
             <origin rpy="3.1415 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/body.dae"/>
+                <mesh filename="../meshes/visual/body.dae"/>
             </geometry>
             <material name="">
                 <color rgba="0.0 0.0 0.0 1.0"/>
@@ -40,7 +40,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FR1.STL"/>
+                <mesh filename="../meshes/visual/link_FR1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -73,7 +73,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FR2.STL"/>
+                <mesh filename="../meshes/visual/link_FR2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -117,7 +117,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FR3.STL"/>
+                <mesh filename="../meshes/visual/link_FR3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -175,7 +175,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FRW.STL"/>
+                <mesh filename="../meshes/visual/link_FRW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -209,7 +209,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FL1.STL"/>
+                <mesh filename="../meshes/visual/link_FL1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -242,7 +242,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FL2.STL"/>
+                <mesh filename="../meshes/visual/link_FL2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -286,7 +286,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FL3.STL"/>
+                <mesh filename="../meshes/visual/link_FL3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -344,7 +344,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_FLW.STL"/>
+                <mesh filename="../meshes/visual/link_FLW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -378,7 +378,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HR1.STL"/>
+                <mesh filename="../meshes/visual/link_HR1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -411,7 +411,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HR2.STL"/>
+                <mesh filename="../meshes/visual/link_HR2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -456,7 +456,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HR3.STL"/>
+                <mesh filename="../meshes/visual/link_HR3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -514,7 +514,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0.02115 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HRW.STL"/>
+                <mesh filename="../meshes/visual/link_HRW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1"/>
@@ -548,7 +548,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HL1.STL"/>
+                <mesh filename="../meshes/visual/link_HL1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -581,7 +581,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HL2.STL"/>
+                <mesh filename="../meshes/visual/link_HL2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -626,7 +626,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HL3.STL"/>
+                <mesh filename="../meshes/visual/link_HL3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -684,7 +684,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 -0.02115 0"/>
             <geometry>
-                <mesh filename="package://max/meshes/visual/link_HLW.STL"/>
+                <mesh filename="../meshes/visual/link_HLW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1"/>

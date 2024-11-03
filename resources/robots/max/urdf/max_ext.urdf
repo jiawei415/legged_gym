@@ -8,9 +8,9 @@
 		</inertial>
 		<visual>
 			<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
-			<geometry>
-				<box size="0.28300 0.20500 0.11000"/>
-			</geometry>
+            <geometry>
+                <mesh filename="../meshes/visual/body.dae"/>
+            </geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>

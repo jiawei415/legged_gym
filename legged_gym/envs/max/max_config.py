@@ -30,7 +30,7 @@
 
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-class MaxRoughCfg( LeggedRobotCfg ):
+class MaxCfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.42] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
@@ -76,7 +76,7 @@ class MaxRoughCfg( LeggedRobotCfg ):
         decimation = 4
 
     class asset( LeggedRobotCfg.asset ):
-        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/max/max_ext.urdf'
+        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/max/urdf/max_ext.urdf'
         name = "max"
         foot_name = "3"
         penalize_contacts_on = ["1", "2"]
@@ -90,7 +90,7 @@ class MaxRoughCfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
-class MaxRoughCfgPPO( LeggedRobotCfgPPO ):
+class MaxCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
     class runner( LeggedRobotCfgPPO.runner ):

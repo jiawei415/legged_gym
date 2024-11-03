@@ -28,12 +28,13 @@
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
-from legged_gym.envs.go2.go2_config import Go2Cfg, Go2CfgPPO
+from legged_gym.envs.max.max_config import MaxCfg, MaxCfgPPO
 
-class Go2RoughCfg( Go2Cfg ):
-    class terrain( Go2Cfg.terrain ):
-        mesh_type = 'trimesh' # "trimesh" # none, plane, heightfield or trimesh
+class MaxFlatCfg( MaxCfg ):
+    class terrain( MaxCfg.terrain ):
+        mesh_type = 'plane' # "heightfield" # none, plane, heightfield or trimesh
 
-class Go2RoughCfgPPO( Go2CfgPPO ):
-    class runner( Go2CfgPPO.runner ):
-        experiment_name = 'go_rough'
+class MaxFlatCfgPPO( MaxCfgPPO ):
+    class runner( MaxCfgPPO.runner ):
+        experiment_name = 'max_flat'
+        max_iterations = 300

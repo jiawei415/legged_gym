@@ -38,9 +38,10 @@ from .anymal_b.anymal_b_config import AnymalBRoughCfg, AnymalBRoughCfgPPO
 from .cassie.cassie import Cassie
 from .cassie.cassie_config import CassieRoughCfg, CassieRoughCfgPPO
 from .a1.a1_config import A1RoughCfg, A1RoughCfgPPO
-from .max.max_config import MaxRoughCfg, MaxRoughCfgPPO
-from .go2.go2_config_flat import Go2FlatCfg, GoFlatCfgPPO
-from .go2.go2_config_rough import Go2RoughCfg, GoRoughCfgPPO
+from .max.max_config_flat import MaxFlatCfg, MaxFlatCfgPPO
+from .max.max_config_rough import MaxRoughCfg, MaxRoughCfgPPO
+from .go2.go2_config_flat import Go2FlatCfg, Go2FlatCfgPPO
+from .go2.go2_config_rough import Go2RoughCfg, Go2RoughCfgPPO
 
 
 import os
@@ -52,6 +53,7 @@ task_registry.register( "anymal_c_flat", Anymal, AnymalCFlatCfg(), AnymalCFlatCf
 task_registry.register( "anymal_b", Anymal, AnymalBRoughCfg(), AnymalBRoughCfgPPO() )
 task_registry.register( "a1", LeggedRobot, A1RoughCfg(), A1RoughCfgPPO() )
 task_registry.register( "cassie", Cassie, CassieRoughCfg(), CassieRoughCfgPPO() )
-task_registry.register( "max", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
-task_registry.register( "go2_flat", LeggedRobot, Go2FlatCfg(), GoFlatCfgPPO() )
-task_registry.register( "go2_rough", LeggedRobot, Go2RoughCfg(), GoRoughCfgPPO() )
+task_registry.register( "max_flat", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
+task_registry.register( "max_rough", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
+task_registry.register( "go2_flat", LeggedRobot, Go2FlatCfg(), Go2FlatCfgPPO() )
+task_registry.register( "go2_rough", LeggedRobot, Go2RoughCfg(), Go2RoughCfgPPO() )
