@@ -30,39 +30,39 @@
 
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-class Go2RoughCfg( LeggedRobotCfg ):
+class Go2Cfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.42] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            # 'FL_hip_joint': 0.1,   # [rad]
-            # 'RL_hip_joint': 0.1,   # [rad]
-            # 'FR_hip_joint': -0.1,  # [rad]
-            # 'RR_hip_joint': -0.1,   # [rad]
+            'FL_hip_joint': 0.1,   # [rad]
+            'RL_hip_joint': 0.1,   # [rad]
+            'FR_hip_joint': -0.1,  # [rad]
+            'RR_hip_joint': -0.1,   # [rad]
 
-            # 'FL_thigh_joint': 0.8,     # [rad]
-            # 'RL_thigh_joint': 1.,   # [rad]
-            # 'FR_thigh_joint': 0.8,     # [rad]
-            # 'RR_thigh_joint': 1.,   # [rad]
+            'FL_thigh_joint': 0.8,     # [rad]
+            'RL_thigh_joint': 1.,   # [rad]
+            'FR_thigh_joint': 0.8,     # [rad]
+            'RR_thigh_joint': 1.,   # [rad]
 
-            # 'FL_calf_joint': -1.5,   # [rad]
-            # 'RL_calf_joint': -1.5,    # [rad]
-            # 'FR_calf_joint': -1.5,  # [rad]
-            # 'RR_calf_joint': -1.5,    # [rad]
+            'FL_calf_joint': -1.5,   # [rad]
+            'RL_calf_joint': -1.5,    # [rad]
+            'FR_calf_joint': -1.5,  # [rad]
+            'RR_calf_joint': -1.5,    # [rad]
 
-            'FL_hip_joint': 0.0,   # [rad]
-            'FR_hip_joint': 0.0 ,  # [rad]
-            'RL_hip_joint': 0.0,   # [rad]
-            'RR_hip_joint': 0.0,   # [rad]
+            # 'FL_hip_joint': 0.0,   # [rad]
+            # 'FR_hip_joint': 0.0 ,  # [rad]
+            # 'RL_hip_joint': 0.0,   # [rad]
+            # 'RR_hip_joint': 0.0,   # [rad]
 
-            'FL_thigh_joint': 0.67,     # [rad]
-            'FR_thigh_joint': 0.67,     # [rad]
-            'RL_thigh_joint': 0.67,   # [rad]
-            'RR_thigh_joint': 0.67,   # [rad]
+            # 'FL_thigh_joint': 0.67,     # [rad]
+            # 'FR_thigh_joint': 0.67,     # [rad]
+            # 'RL_thigh_joint': 0.67,   # [rad]
+            # 'RR_thigh_joint': 0.67,   # [rad]
 
-            'FL_calf_joint': -1.25,   # [rad]
-            'FR_calf_joint': -1.25,  # [rad]
-            'RL_calf_joint': -1.25,    # [rad]
-            'RR_calf_joint': -1.25,    # [rad]
+            # 'FL_calf_joint': -1.25,   # [rad]
+            # 'FR_calf_joint': -1.25,  # [rad]
+            # 'RL_calf_joint': -1.25,    # [rad]
+            # 'RR_calf_joint': -1.25,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
@@ -76,7 +76,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
         decimation = 4
 
     class asset( LeggedRobotCfg.asset ):
-        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/go2_v2/urdf/go2_ext.urdf'
+        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/go2_v2/urdf/go2.urdf'
         name = "go2"
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
@@ -90,7 +90,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
-class Go2RoughCfgPPO( LeggedRobotCfgPPO ):
+class Go2CfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
     class runner( LeggedRobotCfgPPO.runner ):
