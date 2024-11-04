@@ -31,8 +31,13 @@
 from legged_gym.envs.go2.go2_config import Go2Cfg, Go2CfgPPO
 
 class Go2FlatCfg( Go2Cfg ):
+
+    class env( Go2Cfg.env ):
+        num_observations = 48
+
     class terrain( Go2Cfg.terrain ):
-        mesh_type = 'plane' # "heightfield" # none, plane, heightfield or trimesh
+        mesh_type = 'plane'
+        measure_heights = False
 
 class Go2FlatCfgPPO( Go2CfgPPO ):
     class runner( Go2CfgPPO.runner ):
