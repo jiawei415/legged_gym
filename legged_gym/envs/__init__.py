@@ -40,8 +40,15 @@ from .cassie.cassie_config import CassieRoughCfg, CassieRoughCfgPPO
 from .a1.a1_config import A1RoughCfg, A1RoughCfgPPO
 from .max.max_config_flat import MaxFlatCfg, MaxFlatCfgPPO
 from .max.max_config_rough import MaxRoughCfg, MaxRoughCfgPPO
+from .max.max_config_test import MaxCfg, MaxCfgPPO
 from .go2.go2_config_flat import Go2FlatCfg, Go2FlatCfgPPO
 from .go2.go2_config_rough import Go2RoughCfg, Go2RoughCfgPPO
+from .aliengo.aliengo_config_flat import AlienGoFlatCfg, AlienGoFlatCfgPPO
+from .aliengo.aliengo_config_rough import AlienGoRoughCfg, AlienGoRoughCfgPPO
+from .cheetah.cheetah_config_flat import CheetahFlatCfg, CheetahFlatCfgPPO
+from .cheetah.cheetah_config_rough import CheetahRoughCfg, CheetahRoughCfgPPO
+from .laikago.laikago_config_flat import LaikaGoFlatCfg, LaikaGoFlatCfgPPO
+from .laikago.laikago_config_rough import LaikaGoRoughCfg, LaikaGoRoughCfgPPO
 
 
 import os
@@ -53,7 +60,14 @@ task_registry.register( "anymal_c_flat", Anymal, AnymalCFlatCfg(), AnymalCFlatCf
 task_registry.register( "anymal_b", Anymal, AnymalBRoughCfg(), AnymalBRoughCfgPPO() )
 task_registry.register( "a1", LeggedRobot, A1RoughCfg(), A1RoughCfgPPO() )
 task_registry.register( "cassie", Cassie, CassieRoughCfg(), CassieRoughCfgPPO() )
-task_registry.register( "max_flat", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
+task_registry.register( "max_test", LeggedRobot, MaxCfg(), MaxCfgPPO() )
+task_registry.register( "max_flat", LeggedRobot, MaxFlatCfg(), MaxFlatCfgPPO() )
 task_registry.register( "max_rough", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
 task_registry.register( "go2_flat", LeggedRobot, Go2FlatCfg(), Go2FlatCfgPPO() )
 task_registry.register( "go2_rough", LeggedRobot, Go2RoughCfg(), Go2RoughCfgPPO() )
+task_registry.register( "aliengo_flat", LeggedRobot, AlienGoFlatCfg(), AlienGoFlatCfgPPO() )
+task_registry.register( "aliengo_rough", LeggedRobot, AlienGoRoughCfg(), AlienGoRoughCfgPPO() )
+task_registry.register( "cheetah_flat", LeggedRobot, CheetahFlatCfg(), CheetahFlatCfgPPO() )
+task_registry.register( "cheetah_rough", LeggedRobot, CheetahRoughCfg(), CheetahRoughCfgPPO() )
+task_registry.register( "laikago_flat", LeggedRobot, LaikaGoFlatCfg(), LaikaGoFlatCfgPPO() )
+task_registry.register( "laikago_rough", LeggedRobot, LaikaGoRoughCfg(), LaikaGoRoughCfgPPO() )

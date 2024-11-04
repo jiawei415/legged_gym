@@ -36,4 +36,4 @@ class Go2RoughCfg( Go2Cfg ):
 
 class Go2RoughCfgPPO( Go2CfgPPO ):
     class runner( Go2CfgPPO.runner ):
-        experiment_name = 'go_rough'
+        experiment_name = 'go2_rough'

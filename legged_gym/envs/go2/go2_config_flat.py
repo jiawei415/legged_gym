@@ -36,5 +36,5 @@ class Go2FlatCfg( Go2Cfg ):
 
 class Go2FlatCfgPPO( Go2CfgPPO ):
     class runner( Go2CfgPPO.runner ):
-        experiment_name = 'go_flat'
+        experiment_name = 'go2_flat'
         max_iterations = 300
