@@ -44,8 +44,8 @@ from .max.max_config_rough import MaxRoughCfg, MaxRoughCfgPPO
 from .max.max_config_test import MaxCfg, MaxCfgPPO
 from .go2.go2_config_flat import Go2FlatCfg, Go2FlatCfgPPO
 from .go2.go2_config_rough import Go2RoughCfg, Go2RoughCfgPPO
-# from .aliengo.aliengo_config_flat import AlienGoFlatCfg, AlienGoFlatCfgPPO
-# from .aliengo.aliengo_config_rough import AlienGoRoughCfg, AlienGoRoughCfgPPO
+from .aliengo.aliengo_config_flat import AlienGoFlatCfg, AlienGoFlatCfgPPO
+from .aliengo.aliengo_config_rough import AlienGoRoughCfg, AlienGoRoughCfgPPO
 # from .cheetah.cheetah_config_flat import CheetahFlatCfg, CheetahFlatCfgPPO
 # from .cheetah.cheetah_config_rough import CheetahRoughCfg, CheetahRoughCfgPPO
 # from .laikago.laikago_config_flat import LaikaGoFlatCfg, LaikaGoFlatCfgPPO
@@ -67,8 +67,8 @@ task_registry.register( "max_flat", LeggedRobot, MaxFlatCfg(), MaxFlatCfgPPO() )
 task_registry.register( "max_rough", LeggedRobot, MaxRoughCfg(), MaxRoughCfgPPO() )
 task_registry.register( "go2_flat", LeggedRobot, Go2FlatCfg(), Go2FlatCfgPPO() )
 task_registry.register( "go2_rough", LeggedRobot, Go2RoughCfg(), Go2RoughCfgPPO() )
-# task_registry.register( "aliengo_flat", LeggedRobot, AlienGoFlatCfg(), AlienGoFlatCfgPPO() )
-# task_registry.register( "aliengo_rough", LeggedRobot, AlienGoRoughCfg(), AlienGoRoughCfgPPO() )
+task_registry.register( "aliengo_flat", LeggedRobot, AlienGoFlatCfg(), AlienGoFlatCfgPPO() )
+task_registry.register( "aliengo_rough", LeggedRobot, AlienGoRoughCfg(), AlienGoRoughCfgPPO() )
 # task_registry.register( "cheetah_flat", LeggedRobot, CheetahFlatCfg(), CheetahFlatCfgPPO() )
 # task_registry.register( "cheetah_rough", LeggedRobot, CheetahRoughCfg(), CheetahRoughCfgPPO() )
 # task_registry.register( "laikago_flat", LeggedRobot, LaikaGoFlatCfg(), LaikaGoFlatCfgPPO() )
