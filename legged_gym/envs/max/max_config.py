@@ -84,7 +84,7 @@ class MaxCfg( LeggedRobotCfg ):
             heading = [-3.14, 3.14]
     
     class asset( LeggedRobotCfg.asset ):
-        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/max/urdf/max.urdf'
+        file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/max/max.urdf'
         name = "max"
         foot_name = "3"
         penalize_contacts_on = ["1", "2"]

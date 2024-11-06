@@ -8,9 +8,9 @@
 		</inertial>
 		<visual>
 			<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
-            <geometry>
-                <mesh filename="../meshes/visual/body.dae"/>
-            </geometry>
+			<geometry>
+				<box size="0.28300 0.20500 0.11000"/>
+			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>
@@ -51,9 +51,9 @@
 			<inertia ixx="0.00363" ixy="-0.00000" ixz="0.00002" iyy="0.00370" iyz="0.00052" izz="0.00075"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
@@ -78,9 +78,9 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 		</collision>
 		<collision>
@@ -103,18 +103,18 @@
 			<inertia ixx="0.00152" ixy="0.00000" ixz="0.00007" iyy="0.00153" iyz="-0.00000" izz="0.00003"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 		</collision>
 	</link>
@@ -191,9 +191,9 @@
 			<inertia ixx="0.00363" ixy="0.00000" ixz="0.00002" iyy="0.00370" iyz="-0.00052" izz="0.00075"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
@@ -218,9 +218,9 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 		</collision>
 		<collision>
@@ -243,18 +243,18 @@
 			<inertia ixx="0.00152" ixy="0.00000" ixz="0.00007" iyy="0.00153" iyz="-0.00000" izz="0.00003"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.17280"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.17280"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 		</collision>
 	</link>
@@ -331,9 +331,9 @@
 			<inertia ixx="0.00367" ixy="0.00005" ixz="-0.00008" iyy="0.00417" iyz="0.00047" izz="0.00120"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
@@ -358,9 +358,9 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 		</collision>
 		<collision>
@@ -383,18 +383,18 @@
 			<inertia ixx="0.00208" ixy="-0.00000" ixz="0.00008" iyy="0.00210" iyz="-0.00000" izz="0.00007"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 		</collision>
 	</link>
@@ -471,9 +471,9 @@
 			<inertia ixx="0.00367" ixy="0.00005" ixz="0.00008" iyy="0.00417" iyz="-0.00047" izz="0.00120"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
@@ -498,9 +498,9 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10000"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.12000"/>
 			<geometry>
-				<box size="0.20000 0.02500 0.03500"/>
+				<box size="0.24000 0.02500 0.03500"/>
 			</geometry>
 		</collision>
 		<collision>
@@ -523,18 +523,18 @@
 			<inertia ixx="0.00208" ixy="0.00000" ixz="0.00008" iyy="0.00210" iyz="0.00000" izz="0.00007"/>
 		</inertial>
 		<visual>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 			<material name="">
 				<color rgba="0.00000 0.00000 0.00000 0.50000" />
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.10500"/>
+			<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.00000 -0.15120"/>
 			<geometry>
-				<box size="0.24000 0.02000 0.01800"/>
+				<box size="0.34560 0.02000 0.01800"/>
 			</geometry>
 		</collision>
 	</link>
@@ -647,21 +647,21 @@
 		<child link="link_FR3"/>
 		<limit effort="18.00000" lower="-2.44960" upper="2.54400" velocity="33.00000"/>
 		<dynamics damping="0.10000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_FR4" type="fixed">
 		<parent link="link_FR3"/>
 		<child link="link_FR4"/>
 		<dynamics damping="0.00000" friction="0.00000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.24000"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.34560"/>
 		<axis xyz="1.00000 2.00000 3.00000"/>
 	</joint>
 	<joint name="joint_FRW" type="fixed">
 		<parent link="link_FR2"/>
 		<child link="link_FRW"/>
 		<dynamics damping="0.80000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 -0.03550 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 -0.03550 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_FL1" type="revolute">
@@ -685,21 +685,21 @@
 		<child link="link_FL3"/>
 		<limit effort="18.00000" lower="-2.44960" upper="2.54400" velocity="33.00000"/>
 		<dynamics damping="0.10000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_FL4" type="fixed">
 		<parent link="link_FL3"/>
 		<child link="link_FL4"/>
 		<dynamics damping="0.00000" friction="0.00000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.24000"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.34560"/>
 		<axis xyz="1.00000 2.00000 3.00000"/>
 	</joint>
 	<joint name="joint_FLW" type="fixed">
 		<parent link="link_FL2"/>
 		<child link="link_FLW"/>
 		<dynamics damping="0.80000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.03550 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.03550 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_HR1" type="revolute">
@@ -723,21 +723,21 @@
 		<child link="link_HR3"/>
 		<limit effort="18.00000" lower="-2.39950" upper="2.58550" velocity="33.00000"/>
 		<dynamics damping="0.10000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_HR4" type="fixed">
 		<parent link="link_HR3"/>
 		<child link="link_HR4"/>
 		<dynamics damping="0.00000" friction="0.00000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.24000"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.34560"/>
 		<axis xyz="1.00000 2.00000 3.00000"/>
 	</joint>
 	<joint name="joint_HRW" type="fixed">
 		<parent link="link_HR2"/>
 		<child link="link_HRW"/>
 		<dynamics damping="0.80000" friction="0.50000"/>
-		<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 -0.04795 -0.21150"/>
+		<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 -0.04795 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_HL1" type="revolute">
@@ -761,21 +761,21 @@
 		<child link="link_HL3"/>
 		<limit effort="18.00000" lower="-2.39950" upper="2.58550" velocity="33.00000"/>
 		<dynamics damping="0.10000" friction="0.50000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.21150"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_HL4" type="fixed">
 		<parent link="link_HL3"/>
 		<child link="link_HL4"/>
 		<dynamics damping="0.00000" friction="0.00000"/>
-		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.24000"/>
+		<origin rpy="0.00000 0.00000 0.00000" xyz="0.00000 0.00000 -0.34560"/>
 		<axis xyz="1.00000 2.00000 3.00000"/>
 	</joint>
 	<joint name="joint_HLW" type="fixed">
 		<parent link="link_HL2"/>
 		<child link="link_HLW"/>
 		<dynamics damping="0.80000" friction="0.50000"/>
-		<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.04795 -0.21150"/>
+		<origin rpy="0.00000 1.57080 0.00000" xyz="0.00000 0.04795 -0.25380"/>
 		<axis xyz="0.00000 -1.00000 0.00000"/>
 	</joint>
 	<joint name="joint_front_handle" type="fixed">

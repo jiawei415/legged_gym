@@ -31,8 +31,13 @@
 from legged_gym.envs.max.max_config import MaxCfg, MaxCfgPPO
 
 class MaxFlatCfg( MaxCfg ):
+
+    class env( MaxCfg.env ):
+        num_observations = 48
+
     class terrain( MaxCfg.terrain ):
         mesh_type = 'plane' # "heightfield" # none, plane, heightfield or trimesh
+        measure_heights = False
 
 class MaxFlatCfgPPO( MaxCfgPPO ):
     class runner( MaxCfgPPO.runner ):
