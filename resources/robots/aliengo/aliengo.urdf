@@ -82,7 +82,7 @@
       <inertia ixx="0.002903894" ixy="7.185e-05" ixz="-1.262e-06" iyy="0.004907517" iyz="1.75e-06" izz="0.005586944"/>
     </inertial>
   </link>
-  <joint name="FR_upper_joint" type="continuous">
+  <joint name="FR_upper_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 -0.083 0"/>
     <parent link="FR_hip"/>
     <child link="FR_upper"/>
@@ -191,7 +191,7 @@
       <inertia ixx="0.002903894" ixy="-7.185e-05" ixz="-1.262e-06" iyy="0.004907517" iyz="-1.75e-06" izz="0.005586944"/>
     </inertial>
   </link>
-  <joint name="FL_upper_joint" type="continuous">
+  <joint name="FL_upper_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0.083 0"/>
     <parent link="FL_hip"/>
     <child link="FL_upper"/>
@@ -299,7 +299,7 @@
       <inertia ixx="0.002903894" ixy="-7.185e-05" ixz="1.262e-06" iyy="0.004907517" iyz="1.75e-06" izz="0.005586944"/>
     </inertial>
   </link>
-  <joint name="RR_upper_joint" type="continuous">
+  <joint name="RR_upper_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 -0.083 0"/>
     <parent link="RR_hip"/>
     <child link="RR_upper"/>
@@ -408,7 +408,7 @@
       <inertia ixx="0.002903894" ixy="7.185e-05" ixz="1.262e-06" iyy="0.004907517" iyz="-1.75e-06" izz="0.005586944"/>
     </inertial>
   </link>
-  <joint name="RL_upper_joint" type="continuous">
+  <joint name="RL_upper_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 0.083 0"/>
     <parent link="RL_hip"/>
     <child link="RL_upper"/>

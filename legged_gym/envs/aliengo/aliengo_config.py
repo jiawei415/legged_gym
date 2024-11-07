@@ -48,9 +48,9 @@ class AlienGoCfg( LeggedRobotCfg ):
             'RR_upper_joint': upper_offset,   # [rad]
 
             'FL_lower_joint': -lower_offset,   # [rad]
-            'RL_lower_joint': -0.8,    # [rad]
+            'RL_lower_joint': -lower_offset,    # [rad]
             'FR_lower_joint': -lower_offset,  # [rad]
-            'RR_lower_joint': -0.8,    # [rad]
+            'RR_lower_joint': -lower_offset,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
