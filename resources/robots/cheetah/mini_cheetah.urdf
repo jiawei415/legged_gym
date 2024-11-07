@@ -21,7 +21,7 @@
     </link>
 
     <!--!!!!!!!!!!!! Front Right Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-    <joint name="torso_to_abduct_fr_j" type="continuous">
+    <joint name="torso_to_abduct_fr_j" type="revolute">
         <axis xyz="1 0 0"/>
         <origin rpy="0 0 0" xyz="0.19 -0.049 0.0"/>
         <parent link="body"/>
@@ -48,7 +48,7 @@
         </collision>
     </link>
 
-    <joint name="abduct_fr_to_thigh_fr_j" type="continuous">
+    <joint name="abduct_fr_to_thigh_fr_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.062 0.00"/>
         <parent link="abduct_fr"/>
@@ -75,7 +75,7 @@
         </collision>
     </link>
 
-    <joint name="thigh_fr_to_knee_fr_j" type="continuous">
+    <joint name="thigh_fr_to_knee_fr_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0 0.0" xyz="0.0 0.0 -0.209"/>
         <parent link="thigh_fr"/>
@@ -135,7 +135,7 @@
 
  
 <!--!!!!!!!!!!!! Front Left Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-    <joint name="torso_to_abduct_fl_j" type="continuous">
+    <joint name="torso_to_abduct_fl_j" type="revolute">
         <axis xyz="1 0 0"/>
         <origin rpy="0 0 0" xyz="0.19 0.049 0.0"/>
         <parent link="body"/>
@@ -162,7 +162,7 @@
         </collision>
     </link>
 
-    <joint name="abduct_fl_to_thigh_fl_j" type="continuous">
+    <joint name="abduct_fl_to_thigh_fl_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0.0 0.0" xyz="0.0 0.062 0.00"/>
         <parent link="abduct_fl"/>
@@ -189,7 +189,7 @@
         </collision>
     </link>
 
-    <joint name="thigh_fl_to_knee_fl_j" type="continuous">
+    <joint name="thigh_fl_to_knee_fl_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0 0.0" xyz="0.0 0.0 -0.209"/>
         <parent link="thigh_fl"/>
@@ -249,7 +249,7 @@
 
 
 <!--!!!!!!!!!!!! Hind Right Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-    <joint name="torso_to_abduct_hr_j" type="continuous">
+    <joint name="torso_to_abduct_hr_j" type="revolute">
         <axis xyz="1 0 0"/>
         <origin rpy="0 0 0" xyz="-0.19 -0.049 0.0"/>
         <parent link="body"/>
@@ -276,7 +276,7 @@
         </collision>
     </link>
 
-    <joint name="abduct_hr_to_thigh_hr_j" type="continuous">
+    <joint name="abduct_hr_to_thigh_hr_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.062 0.00"/>
         <parent link="abduct_hr"/>
@@ -303,7 +303,7 @@
         </collision>
     </link>
 
-    <joint name="thigh_hr_to_knee_hr_j" type="continuous">
+    <joint name="thigh_hr_to_knee_hr_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0 0.0" xyz="0.0 0.0 -0.209"/>
         <parent link="thigh_hr"/>
@@ -363,7 +363,7 @@
 
 
 <!--!!!!!!!!!!!! Hind Left Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
-    <joint name="torso_to_abduct_hl_j" type="continuous">
+    <joint name="torso_to_abduct_hl_j" type="revolute">
         <axis xyz="1 0 0"/>
         <origin rpy="0 0 0" xyz="-0.19 0.049 0.0"/>
         <parent link="body"/>
@@ -390,7 +390,7 @@
         </collision>
     </link>
 
-    <joint name="abduct_hl_to_thigh_hl_j" type="continuous">
+    <joint name="abduct_hl_to_thigh_hl_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0.0 0.0" xyz="0.0 0.062 0.00"/>
         <parent link="abduct_hl"/>
@@ -417,7 +417,7 @@
         </collision>
     </link>
 
-    <joint name="thigh_hl_to_knee_hl_j" type="continuous">
+    <joint name="thigh_hl_to_knee_hl_j" type="revolute">
         <axis xyz="0 -1 0"/>
         <origin rpy="0.0 0 0.0" xyz="0.0 0.0 -0.209"/>
         <parent link="thigh_hl"/>

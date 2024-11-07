@@ -32,7 +32,7 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 
 class CheetahCfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.60] # x,y,z [m]
+        pos = [0.0, 0.0, 0.32] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
             'torso_to_abduct_fr_j': 0.0 ,  # [rad]
             'torso_to_abduct_fl_j': 0.0,   # [rad]
@@ -56,7 +56,7 @@ class CheetahCfg( LeggedRobotCfg ):
         stiffness = {'_j': 20.}  # [N*m/rad]
         damping = {'_j': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.25
+        action_scale = 0.12
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4
 
@@ -66,6 +66,8 @@ class CheetahCfg( LeggedRobotCfg ):
         foot_name = "None"
         penalize_contacts_on = ["shank", "thigh"]
         terminate_after_contacts_on = ["body"]
+        flip_visual_attachments = False
+        fix_base_link = False
         self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
   
     class rewards( LeggedRobotCfg.rewards ):
