@@ -77,8 +77,25 @@ class AlienGoCfg( LeggedRobotCfg ):
         soft_dof_pos_limit = 0.9
         base_height_target = 0.25
         class scales( LeggedRobotCfg.rewards.scales ):
-            torques = -0.0002
+            # penalize angular velocity in xy axis
+            ang_vel_xy = -0.05
+            # penalize linear velocity in z axis
+            lin_vel_z = -2.0
+            # Penalize joint target changes
+            action_rate = -0.01
+            torques = -0.0002 * 0.5  # 0.5
+            feet_air_time = 1.0 * 0.5  # 0.5
+
+            collision = -1.0
+            dof_acc = -2.5e-7 * 0.1  # 0.1
             dof_pos_limits = -10.0
+
+            base_height = 0.0
+            dof_vel = 0.0
+            feet_stumble = 0.0
+            orientation = 0.0
+            stand_still = 0.0
+            termination = 0.0
 
     class viewer:
         ref_env = 0
