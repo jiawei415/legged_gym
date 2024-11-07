@@ -32,53 +32,41 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 
 class AlienGoCfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.42] # x,y,z [m]
+        pos = [0.0, 0.0, 0.50] # x,y,z [m]
+        hip_offset = 0.10
+        upper_offset = 0.8
+        lower_offset = 1.2
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'FL_hip_joint': 0.1,   # [rad]
-            'RL_hip_joint': 0.1,   # [rad]
-            'FR_hip_joint': -0.1,  # [rad]
-            'RR_hip_joint': -0.1,   # [rad]
+            'FL_hip_joint': hip_offset,   # [rad]
+            'RL_hip_joint': hip_offset,   # [rad]
+            'FR_hip_joint': -hip_offset,  # [rad]
+            'RR_hip_joint': -hip_offset,   # [rad]
 
-            'FL_upper_joint': 0.8,     # [rad]
-            'RL_upper_joint': 1.,   # [rad]
-            'FR_upper_joint': 0.8,     # [rad]
-            'RR_upper_joint': 1.,   # [rad]
+            'FL_upper_joint': upper_offset,     # [rad]
+            'RL_upper_joint': upper_offset,   # [rad]
+            'FR_upper_joint': upper_offset,     # [rad]
+            'RR_upper_joint': upper_offset,   # [rad]
 
-            'FL_lower_joint': -1.5,   # [rad]
-            'RL_lower_joint': -1.5,    # [rad]
-            'FR_lower_joint': -1.5,  # [rad]
-            'RR_lower_joint': -1.5,    # [rad]
-
-            # 'FL_hip_joint': 0.0,   # [rad]
-            # 'FR_hip_joint': 0.0 ,  # [rad]
-            # 'RL_hip_joint': 0.0,   # [rad]
-            # 'RR_hip_joint': 0.0,   # [rad]
-
-            # 'FL_upper_joint': 0.67,     # [rad]
-            # 'FR_upper_joint': 0.67,     # [rad]
-            # 'RL_upper_joint': 0.67,   # [rad]
-            # 'RR_upper_joint': 0.67,   # [rad]
-
-            # 'FL_lower_joint': -1.25,   # [rad]
-            # 'FR_lower_joint': -1.25,  # [rad]
-            # 'RL_lower_joint': -1.25,    # [rad]
-            # 'RR_lower_joint': -1.25,    # [rad]
+            'FL_lower_joint': -lower_offset,   # [rad]
+            'RL_lower_joint': -0.8,    # [rad]
+            'FR_lower_joint': -lower_offset,  # [rad]
+            'RR_lower_joint': -0.8,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 20.}  # [N*m/rad]
+        stiffness = {'joint': 50.}  # [N*m/rad]
         damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.25
+        action_scale = 0.10
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4
 
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/aliengo/aliengo.urdf'
         name = "AlienGo"
-        foot_name = "none"
+        foot_name = "None"
         penalize_contacts_on = ["lower", "upper"]
         terminate_after_contacts_on = ["trunk"]
         flip_visual_attachments = False
@@ -91,6 +79,14 @@ class AlienGoCfg( LeggedRobotCfg ):
         class scales( LeggedRobotCfg.rewards.scales ):
             torques = -0.0002
             dof_pos_limits = -10.0
+
+    class viewer:
+        ref_env = 0
+        pos = [5, 5, 3]  # [m]
+        lookat = [0., 0., 0.]  # [m]
+
+        # pos = [25, 8, 3]  # [m]
+        # lookat = [20.0, 3.8, 0.0]  # [m]
 
 class AlienGoCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
