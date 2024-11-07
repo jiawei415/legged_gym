@@ -15,7 +15,7 @@
         <visual>
             <origin rpy="3.1415 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/body.dae"/>
+                <mesh filename="package://max/meshes/visual/body.dae"/>
             </geometry>
             <material name="">
                 <color rgba="0.0 0.0 0.0 1.0"/>
@@ -40,7 +40,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FR1.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FR1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -60,7 +60,7 @@
         <child link="link_FR1"/>
         <axis xyz="1 0 0"/>
         <limit effort="18" lower="-0.872" upper="0.697" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FR2">
@@ -73,7 +73,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FR2.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FR2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -105,7 +105,7 @@
         <child link="link_FR2"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-4.3633" upper="1.2217" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FR3">
@@ -117,7 +117,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FR3.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FR3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -137,7 +137,7 @@
         <child link="link_FR3"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-2.4496" upper="2.5440" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FR4">
@@ -175,7 +175,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FRW.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FRW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -195,7 +195,7 @@
         <child link="link_FRW"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-214700000" upper="214700000" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.8" friction="0.5"/>
     </joint>
 
     <!-- FL leg -->
@@ -209,7 +209,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FL1.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FL1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -229,7 +229,7 @@
         <child link="link_FL1"/>
         <axis xyz="1 0 0"/>
         <limit effort="18" lower="-0.697" upper="0.872" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FL2">
@@ -242,7 +242,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FL2.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FL2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -274,7 +274,7 @@
         <child link="link_FL2"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-4.3633" upper="1.2217" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FL3">
@@ -286,7 +286,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FL3.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FL3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -306,7 +306,7 @@
         <child link="link_FL3"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-2.4496" upper="2.5440" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_FL4">
@@ -344,7 +344,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_FLW.STL"/>
+                <mesh filename="package://max/meshes/visual/link_FLW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -364,7 +364,7 @@
         <child link="link_FLW"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-214700000" upper="214700000" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.8" friction="0.5"/>
     </joint>
 
     <!-- HR leg -->
@@ -378,7 +378,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HR1.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HR1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -398,7 +398,7 @@
         <child link="link_HR1"/>
         <axis xyz="1 0 0"/>
         <limit effort="18" lower="-0.872" upper="0.697" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HR2">
@@ -411,7 +411,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HR2.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HR2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -443,7 +443,7 @@
         <child link="link_HR2"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-4.3633" upper="1.2217" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HR3">
@@ -456,7 +456,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HR3.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HR3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -476,7 +476,7 @@
         <child link="link_HR3"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-2.3995" upper="2.5855" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HR4">
@@ -514,7 +514,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0.02115 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HRW.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HRW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1"/>
@@ -534,7 +534,7 @@
         <child link="link_HRW"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-214700000" upper="214700000" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.8" friction="0.5"/>
     </joint>
 
     <!-- HL leg -->
@@ -548,7 +548,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HL1.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HL1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -568,7 +568,7 @@
         <child link="link_HL1"/>
         <axis xyz="1 0 0"/>
         <limit effort="18" lower="-0.697" upper="0.872" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HL2">
@@ -581,7 +581,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HL2.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HL2.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -613,7 +613,7 @@
         <child link="link_HL2"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-4.3633" upper="1.2217" velocity="20"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HL3">
@@ -626,7 +626,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HL3.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HL3.STL"/>
             </geometry>
             <material name="">
                 <color rgba="1 1 1 1"/>
@@ -646,7 +646,7 @@
         <child link="link_HL3"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-2.3995" upper="2.5855" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.1" friction="0.5"/>
     </joint>
 
     <link name="link_HL4">
@@ -684,7 +684,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 -0.02115 0"/>
             <geometry>
-                <mesh filename="./max/meshes/visual/link_HLW.STL"/>
+                <mesh filename="package://max/meshes/visual/link_HLW.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1"/>
@@ -704,7 +704,7 @@
         <child link="link_HLW"/>
         <axis xyz="0 -1 0"/>
         <limit effort="18" lower="-214700000" upper="214700000" velocity="33"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.8" friction="0.5"/>
     </joint>
 
     <!-- Front Handle -->
