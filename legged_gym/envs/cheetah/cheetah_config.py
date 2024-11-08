@@ -63,8 +63,10 @@ class CheetahCfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/cheetah/mini_cheetah.urdf'
         name = "cheetah"
-        foot_name = "None"
-        penalize_contacts_on = ["shank", "thigh"]
+        # foot_name = "None"
+        # penalize_contacts_on = ["shank", "thigh"]
+        foot_name = "shank"
+        penalize_contacts_on = ["abduct", "thigh"]
         terminate_after_contacts_on = ["body"]
         flip_visual_attachments = False
         fix_base_link = False

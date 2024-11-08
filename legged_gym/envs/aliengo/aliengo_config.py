@@ -66,8 +66,10 @@ class AlienGoCfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/aliengo/aliengo.urdf'
         name = "AlienGo"
-        foot_name = "None"
-        penalize_contacts_on = ["lower", "upper"]
+        # foot_name = "None"
+        # penalize_contacts_on = ["lower", "upper"]
+        foot_name = "lower"
+        penalize_contacts_on = ["hip", "upper"]
         terminate_after_contacts_on = ["trunk"]
         flip_visual_attachments = False
         fix_base_link = False

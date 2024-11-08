@@ -96,10 +96,10 @@ class LaikaGoCfg( LeggedRobotCfg ):
             stand_still = 0.0
             termination = 0.0
 
-    class viewer:
-        ref_env = 0
-        pos = [5, 5, 3]  # [m]
-        lookat = [0., 0., 0.]  # [m]
+    # class viewer:
+    #     ref_env = 0
+    #     pos = [5, 5, 3]  # [m]
+    #     lookat = [0., 0., 0.]  # [m]
 
         # pos = [25, 8, 3]  # [m]
         # lookat = [20.0, 3.8, 0.0]  # [m]
