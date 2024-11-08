@@ -65,7 +65,7 @@ class LaikaGoCfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/laikago/laikago_toes_zup.urdf'
         name = "laikago"
-        foot_name = "None"
+        foot_name = "lower"
         penalize_contacts_on = ["hip", "upper"]
         terminate_after_contacts_on = ["chassis"]
         flip_visual_attachments = False
@@ -101,14 +101,10 @@ class LaikaGoCfg( LeggedRobotCfg ):
     #     pos = [5, 5, 3]  # [m]
     #     lookat = [0., 0., 0.]  # [m]
 
-        # pos = [25, 8, 3]  # [m]
-        # lookat = [20.0, 3.8, 0.0]  # [m]
-
 class LaikaGoCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
+
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'laikago'
-
-  

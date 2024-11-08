@@ -35,21 +35,6 @@ class MaxCfg( LeggedRobotCfg ):
         pos = [0.0, 0.0, 0.31] # x,y,z [m]
         offset = 0.2
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            # 'joint_FL1': 0.1,   # [rad]
-            # 'joint_HL1': 0.1,   # [rad]
-            # 'joint_FR1': -0.1 ,  # [rad]
-            # 'joint_HR1': -0.1,   # [rad]
-
-            # 'joint_FL2': -0.8,     # [rad]
-            # 'joint_HL2': -1.,   # [rad]
-            # 'joint_FR2': -0.8,     # [rad]
-            # 'joint_HR2': -1.,   # [rad]
-
-            # 'joint_FL3': 1.5,   # [rad]
-            # 'joint_HL3': 1.5,    # [rad]
-            # 'joint_FR3': 1.5,  # [rad]
-            # 'joint_HR3': 1.5,    # [rad]
-
             'joint_FL1': 0.2,  # [rad]
             'joint_HL1': 0.2,  # [rad]
             'joint_FR1': -0.2,  # [rad]
@@ -79,7 +64,7 @@ class MaxCfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/max/max.urdf'
         name = "max"
-        foot_name = "None"
+        foot_name = "3"
         penalize_contacts_on = ["1", "2"]
         terminate_after_contacts_on = ["body"]
         flip_visual_attachments = False
@@ -93,18 +78,15 @@ class MaxCfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
-    class viewer:
-        ref_env = 0
-        # pos = [5, 5, 3]  # [m]
-        # lookat = [0., 0., 0.]  # [m]
-
-        pos = [25, 8, 3]  # [m]
-        lookat = [20.0, 3.8, 0.0]  # [m]
-
+    # class viewer:
+    #     ref_env = 0
+    #     pos = [5, 5, 3]  # [m]
+    #     lookat = [0., 0., 0.]  # [m]
 
 class MaxCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
+
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'max'

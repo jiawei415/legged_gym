@@ -48,21 +48,6 @@ class Go2Cfg( LeggedRobotCfg ):
             'RL_calf_joint': -1.5,    # [rad]
             'FR_calf_joint': -1.5,  # [rad]
             'RR_calf_joint': -1.5,    # [rad]
-
-            # 'FL_hip_joint': 0.0,   # [rad]
-            # 'FR_hip_joint': 0.0 ,  # [rad]
-            # 'RL_hip_joint': 0.0,   # [rad]
-            # 'RR_hip_joint': 0.0,   # [rad]
-
-            # 'FL_thigh_joint': 0.67,     # [rad]
-            # 'FR_thigh_joint': 0.67,     # [rad]
-            # 'RL_thigh_joint': 0.67,   # [rad]
-            # 'RR_thigh_joint': 0.67,   # [rad]
-
-            # 'FL_calf_joint': -1.25,   # [rad]
-            # 'FR_calf_joint': -1.25,  # [rad]
-            # 'RL_calf_joint': -1.25,    # [rad]
-            # 'RR_calf_joint': -1.25,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
@@ -90,11 +75,15 @@ class Go2Cfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
+    # class viewer:
+    #     ref_env = 0
+    #     pos = [5, 5, 3]  # [m]
+    #     lookat = [0., 0., 0.]  # [m]
+
 class Go2CfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
+
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'go2'
-
-  
