@@ -86,7 +86,7 @@ class CheetahCfg( LeggedRobotCfg ):
 
 class CheetahCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.005
+        entropy_coef = 0.01
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''

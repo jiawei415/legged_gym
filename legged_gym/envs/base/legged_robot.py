@@ -88,14 +88,14 @@ class LeggedRobot(BaseTask):
         Args:
             actions (torch.Tensor): Tensor of shape (num_envs, num_actions_per_env)
         """
-        print(f"actions: {actions}")
+        # print(f"actions: {actions}")
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
             self.torques = self._compute_torques(self.actions).view(self.torques.shape)
-            print(f"torques: {self.torques}")
+            # print(f"torques: {self.torques}")
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             self.gym.simulate(self.sim)
             if self.device == 'cpu':
@@ -307,7 +307,7 @@ class LeggedRobot(BaseTask):
                 self.dof_pos_limits[i, 1] = props["upper"][i].item()
                 self.dof_vel_limits[i] = props["velocity"][i].item()
                 self.torque_limits[i] = props["effort"][i].item()
-                print(f"DOF {i}: pos limits: {self.dof_pos_limits[i]}, vel limits: {self.dof_vel_limits[i]}, torque limits: {self.torque_limits[i]}")
+                # print(f"DOF {i}: pos limits: {self.dof_pos_limits[i]}, vel limits: {self.dof_vel_limits[i]}, torque limits: {self.torque_limits[i]}")
                 # soft limits
                 m = (self.dof_pos_limits[i, 0] + self.dof_pos_limits[i, 1]) / 2
                 r = self.dof_pos_limits[i, 1] - self.dof_pos_limits[i, 0]
@@ -385,7 +385,7 @@ class LeggedRobot(BaseTask):
             torques = actions_scaled
         else:
             raise NameError(f"Unknown controller type: {control_type}")
-        print(f"torque_limits: {self.torque_limits}")
+        # print(f"torque_limits: {self.torque_limits}")
         return torch.clip(torques, -self.torque_limits, self.torque_limits)
 
     def _reset_dofs(self, env_ids):
