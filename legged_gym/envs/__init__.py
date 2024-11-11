@@ -31,6 +31,7 @@
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from legged_gym.envs.a1.a1_config import A1RoughCfg, A1RoughCfgPPO
 from .base.legged_robot import LeggedRobot
+from .base.random_robot import RandomRobot
 from .anymal_c.anymal import Anymal
 from .anymal_c.mixed_terrains.anymal_c_rough_config import AnymalCRoughCfg, AnymalCRoughCfgPPO
 from .anymal_c.flat.anymal_c_flat_config import AnymalCFlatCfg, AnymalCFlatCfgPPO
@@ -50,6 +51,8 @@ from .cheetah.cheetah_config_flat import CheetahFlatCfg, CheetahFlatCfgPPO
 from .cheetah.cheetah_config_rough import CheetahRoughCfg, CheetahRoughCfgPPO
 from .laikago.laikago_config_flat import LaikaGoFlatCfg, LaikaGoFlatCfgPPO
 from .laikago.laikago_config_rough import LaikaGoRoughCfg, LaikaGoRoughCfgPPO
+from .random.random_config_flat import RandomFlatCfg, RandomFlatCfgPPO
+from .random.random_config_rough import RandomRoughCfg, RandomRoughCfgPPO
 
 
 import os
@@ -73,3 +76,5 @@ task_registry.register( "cheetah_flat", LeggedRobot, CheetahFlatCfg(), CheetahFl
 task_registry.register( "cheetah_rough", LeggedRobot, CheetahRoughCfg(), CheetahRoughCfgPPO() )
 task_registry.register( "laikago_flat", LeggedRobot, LaikaGoFlatCfg(), LaikaGoFlatCfgPPO() )
 task_registry.register( "laikago_rough", LeggedRobot, LaikaGoRoughCfg(), LaikaGoRoughCfgPPO() )
+task_registry.register( "random_flat", RandomRobot, RandomFlatCfg(), RandomFlatCfgPPO() )
+task_registry.register( "random_rough", RandomRobot, RandomRoughCfg(), RandomRoughCfgPPO() )
