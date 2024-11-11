@@ -148,7 +148,9 @@ class RandomRobot(BaseTask):
     def check_termination(self):
         """ Check if environments need to be reset
         """
-        self.reset_buf = torch.any(torch.norm(self.contact_forces[self.termination_contact_indices, :], dim=-1) > 1., dim=1)
+        contact_forces = self.contact_forces[self.termination_contact_indices, :].view(self.num_envs, -1, 3)
+        self.reset_buf = torch.any(torch.norm(contact_forces, dim=-1) > 1., dim=1)
+        # self.reset_buf = torch.any(torch.norm(self.contact_forces[self.termination_contact_indices, :], dim=-1) > 1., dim=1)
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
@@ -522,8 +524,8 @@ class RandomRobot(BaseTask):
         self.last_root_vel = torch.zeros_like(self.root_states[:, 7:13])
         self.commands = torch.zeros(self.num_envs, self.cfg.commands.num_commands, dtype=torch.float, device=self.device, requires_grad=False) # x vel, y vel, yaw vel, heading
         self.commands_scale = torch.tensor([self.obs_scales.lin_vel, self.obs_scales.lin_vel, self.obs_scales.ang_vel], device=self.device, requires_grad=False,) # TODO change this
-        self.feet_air_time = torch.zeros(self.num_envs, self.feet_indices.shape[1], dtype=torch.float, device=self.device, requires_grad=False)
-        self.last_contacts = torch.zeros(self.num_envs, self.feet_indices.shape[1], dtype=torch.bool, device=self.device, requires_grad=False)
+        self.feet_air_time = torch.zeros(self.num_envs, 4, dtype=torch.float, device=self.device, requires_grad=False)
+        self.last_contacts = torch.zeros(self.num_envs, 4, dtype=torch.bool, device=self.device, requires_grad=False)
         self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
         self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
         self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
@@ -630,16 +632,11 @@ class RandomRobot(BaseTask):
                 2.3 create actor with these properties and add them to the env
              3. Store indices of different bodies of the robot
         """
-        
-        self.feet_indices = torch.zeros(self.num_envs, 4, dtype=torch.long, device=self.device, requires_grad=False)
-        self.penalised_contact_indices = torch.zeros(self.num_envs, 8, dtype=torch.long, device=self.device, requires_grad=False)
-        self.termination_contact_indices = torch.zeros(self.num_envs, 1, dtype=torch.long, device=self.device, requires_grad=False)
-        
+
         self.dof_pos_limits = torch.zeros(self.num_envs, 12, 2, dtype=torch.float, device=self.device, requires_grad=False)
         self.dof_vel_limits = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device, requires_grad=False)
         self.torque_limits = torch.zeros(self.num_envs, 12, dtype=torch.float, device=self.device, requires_grad=False)
         
-
         robot_asset_dict = {}
         start_pose_dict = {}
         dof_props_asset_dict = { }
@@ -677,10 +674,6 @@ class RandomRobot(BaseTask):
             robot_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
             robot_asset_dict[robot_name] = robot_asset
 
-            num_dof = self.gym.get_asset_dof_count(robot_asset)
-            num_bodies = self.gym.get_asset_rigid_body_count(robot_asset)
-
-
             base_init_state_list = self.cfg.init_state.pos[robot_name] + self.cfg.init_state.rot + self.cfg.init_state.lin_vel + self.cfg.init_state.ang_vel
             base_init_state = to_torch(base_init_state_list, device=self.device, requires_grad=False)
             self.base_init_state_dict[robot_name] = base_init_state
@@ -688,11 +681,9 @@ class RandomRobot(BaseTask):
             start_pose.p = gymapi.Vec3(*base_init_state[:3])
             start_pose_dict[robot_name] = start_pose
 
-
             # save body names from the asset
-            body_names = self.gym.get_asset_rigid_body_names(robot_asset)
             dof_names = self.gym.get_asset_dof_names(robot_asset)
-
+            num_dof = self.gym.get_asset_dof_count(robot_asset)
             self.dof_names_dict[robot_name] = dof_names
             self.num_dofs_dict[robot_name] = num_dof
 
@@ -701,14 +692,17 @@ class RandomRobot(BaseTask):
             dof_props_asset_dict[robot_name] = dof_props_asset
             rigid_shape_props_asset_dict[robot_name] = rigid_shape_props_asset
 
+        self.num_dof = max(self.num_dofs_dict.values())
+
         self._get_env_origins()
         env_lower = gymapi.Vec3(0., 0., 0.)
         env_upper = gymapi.Vec3(0., 0., 0.)
 
-        self.num_dof = max(self.num_dofs_dict.values())
         self.robot_names = []
         self.actor_handles = []
         self.envs = []
+        total_body_num = 0
+        feet_indices, penalised_contact_indices, termination_contact_indices = [], [], []
         for i in range(self.num_envs):
             robot_name = np.random.choice(self.cfg.env.robot_names)
             self.robot_names.append(robot_name)
@@ -731,6 +725,8 @@ class RandomRobot(BaseTask):
             self.envs.append(env_handle)
             self.actor_handles.append(actor_handle)
 
+            body_names = self.gym.get_asset_rigid_body_names(robot_asset_dict[robot_name])
+
             feet_names = [s for s in body_names if self.cfg.asset.foot_name[robot_name] in s]
             penalized_contact_names = []
             for name in self.cfg.asset.penalize_contacts_on[robot_name]:
@@ -740,13 +736,17 @@ class RandomRobot(BaseTask):
                 termination_contact_names.extend([s for s in body_names if name in s])
 
             for j in range(len(feet_names)):
-                self.feet_indices[i][j] = self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, feet_names[j])
-
+                feet_indices.append(self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, feet_names[j]) + total_body_num)
             for j in range(len(penalized_contact_names)):
-                self.penalised_contact_indices[i][j] = self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, penalized_contact_names[j])
-
+                penalised_contact_indices.append(self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, penalized_contact_names[j]) + total_body_num)
             for j in range(len(termination_contact_names)):
-                self.termination_contact_indices[i][j] = self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, termination_contact_names[j])
+                termination_contact_indices.append(self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, termination_contact_names[j]) + total_body_num)
+
+            total_body_num  += len(body_names)
+
+        self.feet_indices = torch.tensor(feet_indices, dtype=torch.long, device=self.device, requires_grad=False)
+        self.penalised_contact_indices = torch.tensor(penalised_contact_indices, dtype=torch.long, device=self.device, requires_grad=False)
+        self.termination_contact_indices = torch.tensor(termination_contact_indices, dtype=torch.long, device=self.device, requires_grad=False)
 
     def _get_env_origins(self):
         """ Sets environment origins. On rough terrain the origins are defined by the terrain platforms.
@@ -898,7 +898,9 @@ class RandomRobot(BaseTask):
     
     def _reward_collision(self):
         # Penalize collisions on selected bodies
-        return torch.sum(1.*(torch.norm(self.contact_forces[self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1)
+        contact_forces = self.contact_forces[self.penalised_contact_indices, :].view(self.num_envs, -1, 3)
+        return torch.sum(1.*(torch.norm(contact_forces, dim=-1) > 0.1), dim=1)
+        # return torch.sum(1.*(torch.norm(self.contact_forces[self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1)
     
     def _reward_termination(self):
         # Terminal reward / penalty
@@ -932,7 +934,9 @@ class RandomRobot(BaseTask):
     def _reward_feet_air_time(self):
         # Reward long steps
         # Need to filter the contacts because the contact reporting of PhysX is unreliable on meshes
-        contact = self.contact_forces[self.feet_indices, 2] > 1.
+        # contact = self.contact_forces[self.feet_indices, 2] > 1.
+        contact_forces = self.contact_forces[self.feet_indices, 2].view(self.num_envs, -1)
+        contact = contact_forces > 1.
         contact_filt = torch.logical_or(contact, self.last_contacts) 
         self.last_contacts = contact
         first_contact = (self.feet_air_time > 0.) * contact_filt
@@ -944,8 +948,9 @@ class RandomRobot(BaseTask):
     
     def _reward_stumble(self):
         # Penalize feet hitting vertical surfaces
-        return torch.any(torch.norm(self.contact_forces[self.feet_indices, :2], dim=2) >\
-             5 *torch.abs(self.contact_forces[self.feet_indices, 2]), dim=1)
+        contact_forces1 = self.contact_forces[self.feet_indices, :2].view(self.num_envs, -1, 2)
+        contact_forces2 = self.contact_forces[self.feet_indices, 2].view(self.num_envs, -1)
+        return torch.any(torch.norm(contact_forces1, dim=2) > 5 *torch.abs(contact_forces2), dim=1)
         
     def _reward_stand_still(self):
         # Penalize motion at zero commands
@@ -953,4 +958,5 @@ class RandomRobot(BaseTask):
 
     def _reward_feet_contact_forces(self):
         # penalize high contact forces
-        return torch.sum((torch.norm(self.contact_forces[self.feet_indices, :], dim=-1) -  self.cfg.rewards.max_contact_force).clip(min=0.), dim=1)
+        contact_forces = self.contact_forces[self.feet_indices, :].view(self.num_envs, -1, 3)
+        return torch.sum((torch.norm(contact_forces, dim=-1) -  self.cfg.rewards.max_contact_force).clip(min=0.), dim=1)
