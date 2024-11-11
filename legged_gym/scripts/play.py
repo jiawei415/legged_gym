@@ -87,6 +87,10 @@ def play(args):
             env.set_camera(camera_position, camera_position + camera_direction)
 
         if i < stop_state_log:
+            if args.task.startswith('random'):
+                contact_forces_z = env.contact_forces[env.feet_indices, 2][:4].cpu().numpy()
+            else:
+                contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
             logger.log_states(
                 {
                     'dof_pos_target': actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
@@ -100,7 +104,7 @@ def play(args):
                     'base_vel_y': env.base_lin_vel[robot_index, 1].item(),
                     'base_vel_z': env.base_lin_vel[robot_index, 2].item(),
                     'base_vel_yaw': env.base_ang_vel[robot_index, 2].item(),
-                    'contact_forces_z': env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
+                    'contact_forces_z': contact_forces_z,
                 }
             )
         elif i==stop_state_log:

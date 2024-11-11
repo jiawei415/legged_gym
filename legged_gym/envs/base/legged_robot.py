@@ -77,25 +77,18 @@ class LeggedRobot(BaseTask):
         self._prepare_reward_function()
         self.init_done = True
 
-    def random_action(self):
-        """ Returns a random action
-        """
-        return torch.rand((self.num_envs, self.num_dof)).to(self.device) * 2 - 1
-
     def step(self, actions):
         """ Apply actions, simulate, call self.post_physics_step()
 
         Args:
             actions (torch.Tensor): Tensor of shape (num_envs, num_actions_per_env)
         """
-        # print(f"actions: {actions}")
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
             self.torques = self._compute_torques(self.actions).view(self.torques.shape)
-            # print(f"torques: {self.torques}")
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             self.gym.simulate(self.sim)
             if self.device == 'cpu':
@@ -226,7 +219,6 @@ class LeggedRobot(BaseTask):
                                     self.dof_vel * self.obs_scales.dof_vel,
                                     self.actions
                                     ),dim=-1)
-        # print(f"obs_buf: {self.obs_buf}")
         # add perceptive inputs if not blind
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
@@ -307,7 +299,6 @@ class LeggedRobot(BaseTask):
                 self.dof_pos_limits[i, 1] = props["upper"][i].item()
                 self.dof_vel_limits[i] = props["velocity"][i].item()
                 self.torque_limits[i] = props["effort"][i].item()
-                # print(f"DOF {i}: pos limits: {self.dof_pos_limits[i]}, vel limits: {self.dof_vel_limits[i]}, torque limits: {self.torque_limits[i]}")
                 # soft limits
                 m = (self.dof_pos_limits[i, 0] + self.dof_pos_limits[i, 1]) / 2
                 r = self.dof_pos_limits[i, 1] - self.dof_pos_limits[i, 0]
@@ -377,15 +368,12 @@ class LeggedRobot(BaseTask):
         control_type = self.cfg.control.control_type
         if control_type=="P":
             torques = self.p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - self.d_gains*self.dof_vel
-            # print(f"p_gains: {self.p_gains}")
-            # print(f"d_gains: {self.d_gains}")
         elif control_type=="V":
             torques = self.p_gains*(actions_scaled - self.dof_vel) - self.d_gains*(self.dof_vel - self.last_dof_vel)/self.sim_params.dt
         elif control_type=="T":
             torques = actions_scaled
         else:
             raise NameError(f"Unknown controller type: {control_type}")
-        # print(f"torque_limits: {self.torque_limits}")
         return torch.clip(torques, -self.torque_limits, self.torque_limits)
 
     def _reset_dofs(self, env_ids):
