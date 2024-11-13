@@ -550,10 +550,10 @@ class RandomRobot(BaseTask):
 
         # obtain the offset between the base and the links
         body_states = self.gym.get_sim_rigid_body_states(self.sim, gymapi.STATE_POS)["pose"]["p"]
-        base_pos = body_states[self.termination_contact_indices]
+        base_pos = body_states[self.termination_contact_indices.cpu().numpy()]
         base_pos = np.vstack([base_pos['x'], base_pos['y'], base_pos['z']]).transpose([1, 0])
         base_pos = torch.tensor(base_pos, dtype=torch.float, device=self.device, requires_grad=False).view(self.num_envs, -1, 3)
-        link_pos = body_states[self.link_indices]
+        link_pos = body_states[self.link_indices.cpu().numpy()]
         link_pos = np.vstack([link_pos['x'], link_pos['y'], link_pos['z']]).transpose([1, 0])
         link_pos = torch.tensor(link_pos, dtype=torch.float, device=self.device, requires_grad=False).view(self.num_envs, -1, 3)
         self.offset = (link_pos - base_pos).flatten(start_dim=1)
