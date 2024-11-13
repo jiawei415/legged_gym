@@ -36,7 +36,7 @@ class RandomCfg( LeggedRobotCfg ):
 
     class env( LeggedRobotCfg.env ):
         robot_names = ['a1', 'go2', 'max', 'aliengo', 'laikago', 'cheetah']
-        # robot_names = ['a1']
+        # robot_names = ['a1', 'go2']
     
     class init_state( LeggedRobotCfg.init_state ):
         # x,y,z [m]

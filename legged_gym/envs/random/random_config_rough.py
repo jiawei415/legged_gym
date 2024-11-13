@@ -37,3 +37,4 @@ class RandomRoughCfg( RandomCfg ):
 class RandomRoughCfgPPO( RandomCfgPPO ):
     class runner( RandomCfgPPO.runner ):
         experiment_name = 'random_rough'
+        max_iterations = 3000
