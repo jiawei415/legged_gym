@@ -31,6 +31,12 @@
 from legged_gym.envs.random.random_config import RandomCfg, RandomCfgPPO
 
 class RandomRoughCfg( RandomCfg ):
+    class env( RandomCfg.env ):
+        def __init__(self):
+            super().__init__()
+            if self.use_offset:
+                self.num_observations += 12 * 3
+
     class terrain( RandomCfg.terrain ):
         mesh_type = 'trimesh' # "trimesh" # none, plane, heightfield or trimesh
 

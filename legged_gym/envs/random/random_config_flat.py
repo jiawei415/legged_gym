@@ -34,6 +34,10 @@ class RandomFlatCfg( RandomCfg ):
 
     class env( RandomCfg.env ):
         num_observations = 48
+        def __init__(self):
+            super().__init__()
+            if self.use_offset:
+                self.num_observations += 12 * 3
 
     class terrain( RandomCfg.terrain ):
         mesh_type = 'plane'
