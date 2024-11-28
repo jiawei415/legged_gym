@@ -156,7 +156,7 @@ class Transformer(nn.Module):
             ]
         )
         self.out_norm = nn.LayerNorm(embedding_dim * 3)
-        self.action_head = nn.Linear(embedding_dim * 3, 1)
+        # self.action_head = nn.Linear(embedding_dim * 3, 1)
 
         self.seq_len = seq_len
         self.output_value = output_value
@@ -238,13 +238,38 @@ class Transformer(nn.Module):
             state_emb = block(state_emb, padding_mask=padding_mask)
 
         state_emb = self.out_norm(state_emb)
-        # [batch_size, seq_len, action_dim]
-        # predict actions only from state embeddings
-        if self.output_value:
-            state_emb = state_emb.mean(dim=1)
-        out = self.action_head(state_emb) * self.max_action
-        if not self.output_value:
-            out = out.squeeze(-1)
+        return state_emb
+        # # [batch_size, seq_len, action_dim]
+        # # predict actions only from state embeddings
+        # if self.output_value:
+        #     state_emb = state_emb.mean(dim=1)
+        # out = self.action_head(state_emb) * self.max_action
+        # if not self.output_value:
+        #     out = out.squeeze(-1)
+        # return out
+
+class Actor(nn.Module):
+    def __init__(self, process_net: nn.Module):
+        super().__init__()
+        self.process_net = process_net
+        self.action_head = nn.Linear(process_net.embedding_dim * 3, 1)
+
+    def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
+        feature = self.process_net(states)
+        out = self.action_head(feature)
+        out = out.squeeze(-1)
+        return out
+
+class Critic(nn.Module):
+    def __init__(self, process_net: nn.Module):
+        super().__init__()
+        self.process_net = process_net
+        self.value_head = nn.Linear(process_net.embedding_dim * 3, 1)
+
+    def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
+        feature = self.process_net(states)
+        feature = feature.mean(dim=1)
+        out = self.value_head(feature)
         return out
 
 class TransformerAC(nn.Module):
@@ -262,12 +287,15 @@ class TransformerAC(nn.Module):
         super(TransformerAC, self).__init__()
 
         # activation = get_activation(activation)
+        process_net = Transformer(actor_obs_shape)
 
         # Policy
-        self.actor = Transformer(actor_obs_shape)
+        self.actor = Actor(process_net)
+        # self.actor = Transformer(actor_obs_shape)
 
         # Value function
-        self.critic = Transformer(critic_obs_shape, output_value=True)
+        self.critic = Critic(process_net)
+        # self.critic = Transformer(critic_obs_shape, output_value=True)
 
         # Action noise
         self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
