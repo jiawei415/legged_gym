@@ -218,6 +218,7 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
 
     class runner( LeggedRobotCfgPPO.runner ):
         policy_class_name = 'MLPAC'
+        # policy_class_name = 'TransformerAC'
         algorithm_class_name = 'PPOV2'
         run_name = ''
         experiment_name = 'random'

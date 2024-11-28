@@ -518,7 +518,7 @@ class RandomRobot(BaseTask):
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_level = self.cfg.noise.noise_level
-        noise_dict = {key: torch.zeros(val) for key, val in self.obs_shape_dict.items()}
+        noise_dict = {key: torch.zeros(val).to(self.device) for key, val in self.obs_shape_dict.items()}
         noise_dict["root_obs"][0:3] = noise_scales.lin_vel * noise_level * self.obs_scales.lin_vel
         noise_dict["root_obs"][3:6] = noise_scales.ang_vel * noise_level * self.obs_scales.ang_vel
         noise_dict["root_obs"][6:9] = noise_scales.gravity * noise_level

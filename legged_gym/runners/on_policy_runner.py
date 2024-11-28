@@ -38,7 +38,7 @@ import torch
 
 from rsl_rl.env import VecEnv
 
-from legged_gym.networks import MLPAC
+from legged_gym.networks import MLPAC, TransformerAC
 from legged_gym.algorithms import PPO, PPOV2
 
 
