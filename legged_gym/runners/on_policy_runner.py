@@ -36,9 +36,19 @@ import statistics
 from torch.utils.tensorboard import SummaryWriter
 import torch
 
-from rsl_rl.algorithms import PPO
-from rsl_rl.modules import ActorCritic, ActorCriticRecurrent
 from rsl_rl.env import VecEnv
+
+from legged_gym.networks import MLPAC
+from legged_gym.algorithms import PPO, PPOV2
+
+
+def to_device(data, device):
+    if isinstance(data, dict):
+        for k, v in data.items():
+            data[k] = to_device(v, device)
+    else:
+        data = data.to(device)
+    return data
 
 
 class OnPolicyRunner:
@@ -54,22 +64,24 @@ class OnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.device = device
         self.env = env
+        actor_obs_shape = self.env.obs_shape_dict
         if self.env.num_privileged_obs is not None:
-            num_critic_obs = self.env.num_privileged_obs 
+            critic_obs_shape = self.env.num_privileged_obs
         else:
-            num_critic_obs = self.env.num_obs
-        actor_critic_class = eval(self.cfg["policy_class_name"]) # ActorCritic
-        actor_critic: ActorCritic = actor_critic_class( self.env.num_obs,
-                                                        num_critic_obs,
+            critic_obs_shape = actor_obs_shape
+        actor_critic_class = eval(self.cfg["policy_class_name"])
+        actor_critic: MLPAC = actor_critic_class( actor_obs_shape,
+                                                        critic_obs_shape,
                                                         self.env.num_actions,
                                                         **self.policy_cfg).to(self.device)
-        alg_class = eval(self.cfg["algorithm_class_name"]) # PPO
-        self.alg: PPO = alg_class(actor_critic, device=self.device, **self.alg_cfg)
+        print(f"Network:\n{actor_critic}")
+        alg_class = eval(self.cfg["algorithm_class_name"])
+        self.alg: PPOV2 = alg_class(actor_critic, device=self.device, **self.alg_cfg)
         self.num_steps_per_env = self.cfg["num_steps_per_env"]
         self.save_interval = self.cfg["save_interval"]
 
         # init storage and model
-        self.alg.init_storage(self.env.num_envs, self.num_steps_per_env, [self.env.num_obs], [self.env.num_privileged_obs], [self.env.num_actions])
+        self.alg.init_storage(self.env.num_envs, self.num_steps_per_env, self.env.obs_shape_dict, self.env.privileged_obs_shape_dict, [self.env.num_actions])
 
         # Log
         self.log_dir = log_dir
@@ -91,7 +103,7 @@ class OnPolicyRunner:
         obs = self.env.get_observations()
         privileged_obs = self.env.get_privileged_observations()
         critic_obs = privileged_obs if privileged_obs is not None else obs
-        obs, critic_obs = obs.to(self.device), critic_obs.to(self.device)
+        obs, critic_obs = to_device(obs, self.device), to_device(critic_obs, self.device)
         self.alg.actor_critic.train() # switch to train mode (for dropout for example)
 
         ep_infos = []
@@ -110,7 +122,8 @@ class OnPolicyRunner:
                     actions = self.alg.act(obs, critic_obs)
                     obs, privileged_obs, rewards, dones, infos = self.env.step(actions)
                     critic_obs = privileged_obs if privileged_obs is not None else obs
-                    obs, critic_obs, rewards, dones = obs.to(self.device), critic_obs.to(self.device), rewards.to(self.device), dones.to(self.device)
+                    obs, critic_obs = to_device(obs, self.device), to_device(critic_obs, self.device)
+                    rewards, dones = rewards.to(self.device), dones.to(self.device)
                     self.alg.process_env_step(rewards, dones, infos)
                     
                     if self.log_dir is not None:

@@ -217,5 +217,7 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         entropy_coef = 0.01
 
     class runner( LeggedRobotCfgPPO.runner ):
+        policy_class_name = 'MLPAC'
+        algorithm_class_name = 'PPOV2'
         run_name = ''
         experiment_name = 'random'

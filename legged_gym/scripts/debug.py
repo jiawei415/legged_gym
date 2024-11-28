@@ -28,21 +28,24 @@
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
-from legged_gym.envs.random.random_config import RandomCfg, RandomCfgPPO
+import numpy as np
+import os
+from datetime import datetime
 
-class RandomRoughCfg( RandomCfg ):
-    class env( RandomCfg.env ):
-        def __init__(self):
-            super().__init__()
-            if self.use_offset:
-                self.num_observations += 12 * 3
+import isaacgym
+from legged_gym.envs import *
+from legged_gym.utils import get_args, task_registry
+import torch
 
-    class terrain( RandomCfg.terrain ):
-        mesh_type = 'trimesh' # "trimesh" # none, plane, heightfield or trimesh
+def train(args):
+    env, env_cfg = task_registry.make_env(name=args.task, args=args)
+    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, log_root=args.log_root)
+    task_registry.save_cfgs(args=args, env_cfg=env_cfg, train_cfg=train_cfg)
+    ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True)
 
-class RandomRoughCfgPPO( RandomCfgPPO ):
-    class algorithm( RandomCfgPPO.algorithm ):
-        learning_rate = 5.e-4
-    class runner( RandomCfgPPO.runner ):
-        experiment_name = 'random_rough'
-        max_iterations = 5000
+if __name__ == '__main__':
+    args = get_args()
+    args.headless = True
+    args.num_envs = 50
+    args.task = 'random_rough'
+    train(args)

@@ -75,7 +75,8 @@ def play(args):
     img_idx = 0
 
     for i in range(10*int(env.max_episode_length)):
-        actions = policy(obs.detach())
+        with torch.no_grad():
+            actions = policy(obs)
         obs, _, rews, dones, infos = env.step(actions.detach())
         if RECORD_FRAMES:
             if i % 2:

@@ -72,6 +72,19 @@ class RandomRobot(BaseTask):
         self._parse_cfg(self.cfg)
         super().__init__(self.cfg, sim_params, physics_engine, sim_device, headless)
 
+        self.obs_shape_dict = {
+            "root_obs": (9,),
+            "link_obs": (self.num_dof, 3),
+            "cmd_obs": (3,),
+        }
+        if self.cfg.env.use_offset:
+            self.obs_shape_dict["offset"] = (self.num_dof, 3)
+        if self.cfg.terrain.measure_heights:
+            self.obs_shape_dict["map_obs"] = (187,)
+        self.obs_dict = {key: torch.zeros((self.num_envs, *val), device=self.device) for key, val in self.obs_shape_dict.items()}
+        self.privileged_obs_shape_dict = None
+        self.privileged_obs_dict = None
+
         if not self.headless:
             self.set_camera(self.cfg.viewer.pos, self.cfg.viewer.lookat)
         self._init_buffers()
@@ -104,11 +117,11 @@ class RandomRobot(BaseTask):
 
         # return clipped obs, clipped states (None), rewards, dones and infos
         clip_obs = self.cfg.normalization.clip_observations
-        self.obs_buf = torch.clip(self.obs_buf, -clip_obs, clip_obs)
-        if self.privileged_obs_buf is not None:
-            self.privileged_obs_buf = torch.clip(self.privileged_obs_buf, -clip_obs, clip_obs)
+        self.obs_dict = {key: torch.clip(val, -clip_obs, clip_obs) for key, val in self.obs_dict.items()}
+        if self.privileged_obs_dict is not None:
+            self.privileged_obs_dict = {key: torch.clip(val, -clip_obs, clip_obs) for key, val in self.privileged_obs_dict.items()}
         # time.sleep(2)
-        return self.obs_buf, self.privileged_obs_buf, self.rew_buf, self.reset_buf, self.extras
+        return self.obs_dict, self.privileged_obs_dict, self.rew_buf, self.reset_buf, self.extras
 
     def post_physics_step(self):
         """ check terminations, compute observations and rewards
@@ -215,27 +228,36 @@ class RandomRobot(BaseTask):
             rew = self._reward_termination() * self.reward_scales["termination"]
             self.rew_buf += rew
             self.episode_sums["termination"] += rew
-    
+
+    def get_observations(self):
+        return self.obs_dict
+
+    def get_privileged_observations(self):
+        return self.privileged_obs_dict
+
     def compute_observations(self):
         """ Computes observations
         """
-        self.obs_buf = torch.cat((  self.base_lin_vel * self.obs_scales.lin_vel,
-                                    self.base_ang_vel  * self.obs_scales.ang_vel,
-                                    self.projected_gravity,
-                                    self.commands[:, :3] * self.commands_scale,
-                                    (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
+        obs_dict = {}
+        root_obs = torch.cat(
+            [self.base_lin_vel * self.obs_scales.lin_vel, self.base_ang_vel  * self.obs_scales.ang_vel, self.projected_gravity], dim=-1
+        ) # (num_envs, 3 + 3 + 3)
+        link_obs = torch.stack(( (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
                                     self.dof_vel * self.obs_scales.dof_vel,
                                     self.actions
-                                    ),dim=-1)
+                                    ), dim=-1) # (num_envs, num_dof, 1 + 1 + 1)
+        cmd_obs = self.commands[:, :3] * self.commands_scale # (num_envs, 3)
+        obs_dict.update({"root_obs": root_obs, "link_obs": link_obs, "cmd_obs": cmd_obs})
         # add perceptive inputs if not blind
         if self.cfg.env.use_offset:
-            self.obs_buf = torch.cat((self.obs_buf, self.offset), dim=-1)
+            obs_dict.update({"offset": self.offset}) # (num_envs, num_dof, 3)
         if self.cfg.terrain.measure_heights:
-            heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
-            self.obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
+            heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements # (num_envs, 187)
+            obs_dict.update({"map_obs": heights})
         # add noise if needed
         if self.add_noise:
-            self.obs_buf += (2 * torch.rand_like(self.obs_buf) - 1) * self.noise_scale_vec
+            obs_dict = {key: val + (2 * torch.rand_like(val) - 1) * self.noise_scale_dict[key] for key, val in obs_dict.items()}
+        self.obs_dict = obs_dict
 
     def create_sim(self):
         """ Creates simulation, terrain and evironments
@@ -483,6 +505,33 @@ class RandomRobot(BaseTask):
             noise_vec[48:235] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
         return noise_vec
 
+    def _get_noise_scale_dict(self, cfg):
+        """ Sets a vector used to scale the noise added to the observations.
+            [NOTE]: Must be adapted when changing the observations structure
+
+        Args:
+            cfg (Dict): Environment config file
+
+        Returns:
+            [torch.Tensor]: Vector of scales used to multiply a uniform distribution in [-1, 1]
+        """
+        self.add_noise = self.cfg.noise.add_noise
+        noise_scales = self.cfg.noise.noise_scales
+        noise_level = self.cfg.noise.noise_level
+        noise_dict = {key: torch.zeros(val) for key, val in self.obs_shape_dict.items()}
+        noise_dict["root_obs"][0:3] = noise_scales.lin_vel * noise_level * self.obs_scales.lin_vel
+        noise_dict["root_obs"][3:6] = noise_scales.ang_vel * noise_level * self.obs_scales.ang_vel
+        noise_dict["root_obs"][6:9] = noise_scales.gravity * noise_level
+        noise_dict["link_obs"][:, 0] = noise_scales.dof_pos * noise_level * self.obs_scales.dof_pos
+        noise_dict["link_obs"][:, 1] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
+        noise_dict["link_obs"][:, 2] = 0.
+        noise_dict["cmd_obs"][:] = 0.
+        if self.cfg.env.use_offset:
+            noise_dict["offset"][:] = 0.
+        if self.cfg.terrain.measure_heights:
+            noise_dict["map_obs"][:] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
+        return noise_dict
+
     #----------------------------------------
     def _init_buffers(self):
         """ Initialize torch tensors which will contain simulation states and processed quantities
@@ -507,7 +556,7 @@ class RandomRobot(BaseTask):
         # initialize some data used later on
         self.common_step_counter = 0
         self.extras = {}
-        self.noise_scale_vec = self._get_noise_scale_vec(self.cfg)
+        self.noise_scale_dict = self._get_noise_scale_dict(self.cfg)
         self.gravity_vec = to_torch(get_axis_params(-1., self.up_axis_idx), device=self.device).repeat((self.num_envs, 1))
         self.forward_vec = to_torch([1., 0., 0.], device=self.device).repeat((self.num_envs, 1))
         self.torques = torch.zeros(self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)
@@ -554,7 +603,7 @@ class RandomRobot(BaseTask):
         self.gym.refresh_rigid_body_state_tensor(self.sim)
         base_pos = rb_states[self.termination_contact_indices, 0:3].view(self.num_envs, -1, 3)
         link_pos = rb_states[self.link_indices, 0:3].view(self.num_envs, -1, 3)
-        self.offset = (link_pos - base_pos).flatten(start_dim=1)
+        self.offset = (link_pos - base_pos) # .flatten(start_dim=1)
 
     def _prepare_reward_function(self):
         """ Prepares a list of reward functions, whcih will be called to compute the total reward.
