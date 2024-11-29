@@ -36,8 +36,6 @@ import random
 from isaacgym import gymapi
 from isaacgym import gymutil
 
-from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
-
 
 def to_str_dict(input_dict):
     for key, val in input_dict.items():
@@ -140,6 +138,10 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
         # num envs
         if args.num_envs is not None:
             env_cfg.env.num_envs = args.num_envs
+        if args.jizhi:
+            env_cfg.asset.resources_path = "/apdcephfs_cq10/share_1150325/ztjiaweixu/datasets/legged"
+        else:
+            env_cfg.asset.resources_path = "/home/ztjiaweixu/Code/Robot"
     if cfg_train is not None:
         if args.seed is not None:
             cfg_train.seed = args.seed
@@ -175,6 +177,7 @@ def get_args():
         {"name": "--num_envs", "type": int, "help": "Number of environments to create. Overrides config file if provided."},
         {"name": "--seed", "type": int, "help": "Random seed. Overrides config file if provided."},
         {"name": "--max_iterations", "type": int, "help": "Maximum number of training iterations. Overrides config file if provided."},
+        {"name": "--jizhi", "action": "store_true", "default": False, "help": "Run experiments on Jizhi"},
     ]
     # parse arguments
     args = gymutil.parse_arguments(

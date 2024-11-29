@@ -28,6 +28,7 @@
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
+from legged_gym import LEGGED_GYM_ROOT_DIR
 from .base_config import BaseConfig
 
 class LeggedRobotCfg(BaseConfig):
@@ -98,6 +99,7 @@ class LeggedRobotCfg(BaseConfig):
         decimation = 4
 
     class asset:
+        resources_path = LEGGED_GYM_ROOT_DIR
         file = ""
         name = "legged_robot"  # actor name
         foot_name = "None" # name of the feet bodies, used to index body state and contact force tensors
