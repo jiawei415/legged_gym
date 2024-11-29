@@ -141,7 +141,7 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
         if args.jizhi:
             env_cfg.asset.resources_path = "/apdcephfs_cq10/share_1150325/ztjiaweixu/datasets/legged"
         else:
-            env_cfg.asset.resources_path = "/home/ztjiaweixu/Code/Robot"
+            env_cfg.asset.resources_path = "/home/ztjiaweixu/Code/Robot/datas/legged"
     if cfg_train is not None:
         if args.seed is not None:
             cfg_train.seed = args.seed

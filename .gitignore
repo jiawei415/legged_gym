@@ -55,6 +55,7 @@ logs
 runs
 results
 figures
+taiji
 
 # other
 *.egg-info
