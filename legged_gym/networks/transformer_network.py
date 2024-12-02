@@ -118,17 +118,17 @@ class Transformer(nn.Module):
         self,
         state_shape: Dict[str, tuple],
         output_value: bool = False,
-        num_layers: int = 3,
+        num_layers: int = 2,
         num_heads: int = 1,
         body_hidden_dim: int = 32,
-        env_hidden_dim: int = 256,
+        env_hidden_dim: int = 32,
         attention_dropout: float = 0.1,
         residual_dropout: float = 0.1,
         embedding_dropout: float = 0.1,
         max_action: float = 1.0,
     ):
         super().__init__()
-        seq_len = state_shape['link_obs'][0]
+        seq_len = state_shape['link_obs'][0] + 2
         root_dim = state_shape['root_obs'][-1]
         link_dim = state_shape['link_obs'][-1]
         cmd_dim = state_shape['cmd_obs'][-1]
@@ -140,7 +140,7 @@ class Transformer(nn.Module):
         self.link_emb = nn.Linear(link_dim + offset_dim, body_hidden_dim)
         self.root_emb = nn.Linear(root_dim, body_hidden_dim)
         self.cmd_emb = nn.Linear(cmd_dim + map_dim, env_hidden_dim)
-        embedding_dim = body_hidden_dim + body_hidden_dim + env_hidden_dim
+        embedding_dim = body_hidden_dim # + body_hidden_dim + env_hidden_dim
 
         self.emb_norm = nn.LayerNorm(embedding_dim)
         self.emb_drop = nn.Dropout(embedding_dropout)
@@ -187,14 +187,14 @@ class Transformer(nn.Module):
         """
 
         device = inputs.device
-        embedding_dim = inputs.size(-1)
+        seq_len, embedding_dim = inputs.size(1), inputs.size(2)
 
         # Compute the position frequencies
         position_j = 1. / torch.pow(10000., 2 * torch.arange(embedding_dim // 2, dtype=torch.float32, device=device) / embedding_dim)
         position_j = position_j.unsqueeze(0)  # shape (1, embedding_dim//2)
 
         # Compute the sequence of indices
-        position_i = torch.arange(self.seq_len, dtype=torch.float32, device=device).unsqueeze(1)  # shape (seq_len, 1)
+        position_i = torch.arange(seq_len, dtype=torch.float32, device=device).unsqueeze(1)  # shape (seq_len, 1)
 
         # Compute the product of indices and frequencies
         position_ij = torch.matmul(position_i, position_j)  # shape (seq_len, embedding_dim//2)
@@ -225,9 +225,9 @@ class Transformer(nn.Module):
         batch_size, seq_len = link_obs.shape[0], link_obs.shape[1]
         # [batch_size, seq_len, emb_dim]
         link_emb = self.link_emb(link_obs)
-        root_emb = self.root_emb(root_obs).unsqueeze(1).expand(-1, seq_len, -1)
-        cmd_emb = self.cmd_emb(cmd_obs).unsqueeze(1).expand(-1, seq_len, -1)
-        state_emb = torch.cat([link_emb, root_emb, cmd_emb], dim=-1)
+        root_emb = self.root_emb(root_obs).unsqueeze(1) # .expand(-1, seq_len, -1)
+        cmd_emb = self.cmd_emb(cmd_obs).unsqueeze(1) # .expand(-1, seq_len, -1)
+        state_emb = torch.cat([cmd_emb, root_emb, link_emb], dim=1)
         state_pos = self.positional_embedding(state_emb)
         state_emb = state_emb + state_pos
 
@@ -240,7 +240,7 @@ class Transformer(nn.Module):
             state_emb = block(state_emb, padding_mask=padding_mask)
 
         state_emb = self.out_norm(state_emb)
-        return state_emb
+        return state_emb[:, 2:, :]
         # # [batch_size, seq_len, action_dim]
         # # predict actions only from state embeddings
         # if self.output_value:
