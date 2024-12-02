@@ -118,9 +118,10 @@ class Transformer(nn.Module):
         self,
         state_shape: Dict[str, tuple],
         output_value: bool = False,
-        embedding_dim: int = 128,
         num_layers: int = 3,
         num_heads: int = 1,
+        body_hidden_dim: int = 32,
+        env_hidden_dim: int = 256,
         attention_dropout: float = 0.1,
         residual_dropout: float = 0.1,
         embedding_dropout: float = 0.1,
@@ -136,18 +137,19 @@ class Transformer(nn.Module):
 
 
         # additional seq_len embeddings for padding timesteps
-        self.link_emb = nn.Linear(link_dim + offset_dim, embedding_dim)
-        self.root_emb = nn.Linear(root_dim, embedding_dim)
-        self.cmd_emb = nn.Linear(cmd_dim + map_dim, embedding_dim)
+        self.link_emb = nn.Linear(link_dim + offset_dim, body_hidden_dim)
+        self.root_emb = nn.Linear(root_dim, body_hidden_dim)
+        self.cmd_emb = nn.Linear(cmd_dim + map_dim, env_hidden_dim)
+        embedding_dim = body_hidden_dim + body_hidden_dim + env_hidden_dim
 
-        self.emb_norm = nn.LayerNorm(embedding_dim * 3)
+        self.emb_norm = nn.LayerNorm(embedding_dim)
         self.emb_drop = nn.Dropout(embedding_dropout)
 
         self.blocks = nn.ModuleList(
             [
                 TransformerBlock(
                     seq_len=seq_len,
-                    embedding_dim=embedding_dim * 3,
+                    embedding_dim=embedding_dim,
                     num_heads=num_heads,
                     attention_dropout=attention_dropout,
                     residual_dropout=residual_dropout,
@@ -155,7 +157,7 @@ class Transformer(nn.Module):
                 for _ in range(num_layers)
             ]
         )
-        self.out_norm = nn.LayerNorm(embedding_dim * 3)
+        self.out_norm = nn.LayerNorm(embedding_dim)
         # self.action_head = nn.Linear(embedding_dim * 3, 1)
 
         self.seq_len = seq_len
@@ -252,7 +254,7 @@ class Actor(nn.Module):
     def __init__(self, process_net: nn.Module):
         super().__init__()
         self.process_net = process_net
-        self.action_head = nn.Linear(process_net.embedding_dim * 3, 1)
+        self.action_head = nn.Linear(process_net.embedding_dim, 1)
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
@@ -264,11 +266,11 @@ class Critic(nn.Module):
     def __init__(self, process_net: nn.Module):
         super().__init__()
         self.process_net = process_net
-        self.value_head = nn.Linear(process_net.embedding_dim * 3, 1)
+        self.value_head = nn.Linear(process_net.embedding_dim, 1)
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
-        feature = feature.mean(dim=1)
+        feature = feature[:, -1, :]
         out = self.value_head(feature)
         return out
 
