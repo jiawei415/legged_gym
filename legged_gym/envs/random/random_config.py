@@ -210,8 +210,16 @@ class RandomCfg( LeggedRobotCfg ):
 
 class RandomCfgPPO( LeggedRobotCfgPPO ):
     class policy:
+        # hyperparameters for the mlp
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]
+        # hyperparameters for the transformer
+        shared_backbone = True
+        embedding_dim = 32
+        mlp_embedding = False,
+        mlp_prediction = False
+        num_layers = 2
+        num_heads = 1
 
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01

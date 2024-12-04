@@ -29,19 +29,17 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 from typing import Optional, Dict
 
-import numpy as np
-
 import torch
 import torch.nn as nn
 from torch.distributions import Normal
-from torch.nn.modules import rnn
+
 
 class ResidualBlock(nn.Module):
     def __init__(self, dim1, dim2):
         super().__init__()
         self.fc1 = torch.nn.Linear(dim1, dim2)
-        self.fc2 = torch.nn.Linear(dim2, dim2)
         self.activation = nn.GELU()
+        self.fc2 = torch.nn.Linear(dim2, dim2)
     def forward(self, x):
         hidden = self.fc1(x)
         residual = hidden
@@ -50,17 +48,19 @@ class ResidualBlock(nn.Module):
         out += residual
         return out
 
+
 class MLPBlock(nn.Module):
     def __init__(self, dim1, dim2, hidden):
         super().__init__()
         self.fc1 = torch.nn.Linear(dim1, hidden)
-        self.fc2 = torch.nn.Linear(hidden, dim2)
         self.activation = nn.GELU()
+        self.fc2 = torch.nn.Linear(hidden, dim2)
     def forward(self, x):
         out = self.fc1(x)
         out = self.activation(out)
         out = self.fc2(out)
         return out
+
 
 class TransformerBlock(nn.Module):
     def __init__(
@@ -113,19 +113,18 @@ class TransformerBlock(nn.Module):
         x = x + self.mlp(self.norm2(x))
         return x
 
+
 class Transformer(nn.Module):
     def __init__(
         self,
         state_shape: Dict[str, tuple],
-        output_value: bool = False,
         num_layers: int = 2,
         num_heads: int = 1,
-        body_hidden_dim: int = 32,
-        env_hidden_dim: int = 32,
+        embedding_dim: int = 32,
+        mlp_embedding: bool = False,
         attention_dropout: float = 0.1,
         residual_dropout: float = 0.1,
         embedding_dropout: float = 0.1,
-        max_action: float = 1.0,
     ):
         super().__init__()
         seq_len = state_shape['link_obs'][0] + 2
@@ -137,10 +136,14 @@ class Transformer(nn.Module):
 
 
         # additional seq_len embeddings for padding timesteps
-        self.link_emb = nn.Linear(link_dim + offset_dim, body_hidden_dim)
-        self.root_emb = nn.Linear(root_dim, body_hidden_dim)
-        self.cmd_emb = nn.Linear(cmd_dim + map_dim, env_hidden_dim)
-        embedding_dim = body_hidden_dim # + body_hidden_dim + env_hidden_dim
+        if mlp_embedding:
+            self.link_emb = ResidualBlock(link_dim + offset_dim, embedding_dim)
+            self.root_emb = ResidualBlock(root_dim, embedding_dim)
+            self.cmd_emb = ResidualBlock(cmd_dim + map_dim, embedding_dim)
+        else:
+            self.link_emb = nn.Linear(link_dim + offset_dim, embedding_dim)
+            self.root_emb = nn.Linear(root_dim, embedding_dim)
+            self.cmd_emb = nn.Linear(cmd_dim + map_dim, embedding_dim)
 
         self.emb_norm = nn.LayerNorm(embedding_dim)
         self.emb_drop = nn.Dropout(embedding_dropout)
@@ -161,9 +164,7 @@ class Transformer(nn.Module):
         # self.action_head = nn.Linear(embedding_dim * 3, 1)
 
         self.seq_len = seq_len
-        self.output_value = output_value
         self.embedding_dim = embedding_dim
-        self.max_action = max_action
 
         self.apply(self._init_weights)
 
@@ -222,11 +223,10 @@ class Transformer(nn.Module):
             map_obs = states['map_obs']
             cmd_obs = torch.cat([cmd_obs, map_obs], dim=-1)
 
-        batch_size, seq_len = link_obs.shape[0], link_obs.shape[1]
         # [batch_size, seq_len, emb_dim]
         link_emb = self.link_emb(link_obs)
-        root_emb = self.root_emb(root_obs).unsqueeze(1) # .expand(-1, seq_len, -1)
-        cmd_emb = self.cmd_emb(cmd_obs).unsqueeze(1) # .expand(-1, seq_len, -1)
+        root_emb = self.root_emb(root_obs).unsqueeze(1)
+        cmd_emb = self.cmd_emb(cmd_obs).unsqueeze(1)
         state_emb = torch.cat([cmd_emb, root_emb, link_emb], dim=1)
         state_pos = self.positional_embedding(state_emb)
         state_emb = state_emb + state_pos
@@ -241,20 +241,17 @@ class Transformer(nn.Module):
 
         state_emb = self.out_norm(state_emb)
         return state_emb[:, 2:, :]
-        # # [batch_size, seq_len, action_dim]
-        # # predict actions only from state embeddings
-        # if self.output_value:
-        #     state_emb = state_emb.mean(dim=1)
-        # out = self.action_head(state_emb) * self.max_action
-        # if not self.output_value:
-        #     out = out.squeeze(-1)
-        # return out
+
 
 class Actor(nn.Module):
-    def __init__(self, process_net: nn.Module):
+    def __init__(self, process_net: nn.Module, mlp_prediction: str = False):
         super().__init__()
         self.process_net = process_net
-        self.action_head = nn.Linear(process_net.embedding_dim, 1)
+        embedding_dim = process_net.embedding_dim
+        if mlp_prediction:
+            self.action_head = MLPBlock(embedding_dim, 1, embedding_dim)
+        else:
+            self.action_head = nn.Linear(embedding_dim, 1)
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
@@ -262,11 +259,16 @@ class Actor(nn.Module):
         out = out.squeeze(-1)
         return out
 
+
 class Critic(nn.Module):
-    def __init__(self, process_net: nn.Module):
+    def __init__(self, process_net: nn.Module, mlp_prediction: str = False):
         super().__init__()
         self.process_net = process_net
-        self.value_head = nn.Linear(process_net.embedding_dim, 1)
+        embedding_dim = process_net.embedding_dim
+        if mlp_prediction:
+            self.value_head = MLPBlock(embedding_dim, 1, embedding_dim)
+        else:
+            self.value_head = nn.Linear(embedding_dim, 1)
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
@@ -274,13 +276,18 @@ class Critic(nn.Module):
         out = self.value_head(feature)
         return out
 
+
 class TransformerAC(nn.Module):
     is_recurrent = False
     def __init__(self,  actor_obs_shape,
                         critic_obs_shape,
                         num_actions,
-                        actor_hidden_dims=[256, 256, 256],
-                        critic_hidden_dims=[256, 256, 256],
+                        num_layers: int = 2,
+                        num_heads: int = 1,
+                        embedding_dim=32,
+                        shared_backbone=True,
+                        mlp_embedding=False,
+                        mlp_prediction=False,
                         activation='elu',
                         init_noise_std=1.0,
                         **kwargs):
@@ -289,14 +296,16 @@ class TransformerAC(nn.Module):
         super(TransformerAC, self).__init__()
 
         # activation = get_activation(activation)
-        process_net = Transformer(actor_obs_shape)
+        process_net = Transformer(actor_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
 
         # Policy
-        self.actor = Actor(process_net)
+        self.actor = Actor(process_net, mlp_prediction)
         # self.actor = Transformer(actor_obs_shape)
 
         # Value function
-        self.critic = Critic(process_net)
+        if not shared_backbone:
+            process_net = Transformer(critic_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
+        self.critic = Critic(process_net, mlp_prediction)
         # self.critic = Transformer(critic_obs_shape, output_value=True)
 
         # Action noise
