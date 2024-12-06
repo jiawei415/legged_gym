@@ -76,7 +76,7 @@ class OnPolicyRunner:
                                                         **self.policy_cfg).to(self.device)
         print(f"Network:\n{actor_critic}")
         alg_class = eval(self.cfg["algorithm_class_name"])
-        self.alg: PPOV2 = alg_class(actor_critic, device=self.device, **self.alg_cfg)
+        self.alg: PPOV2 = alg_class(actor_critic=actor_critic, device=self.device, **self.alg_cfg)
         self.num_steps_per_env = self.cfg["num_steps_per_env"]
         self.save_interval = self.cfg["save_interval"]
 

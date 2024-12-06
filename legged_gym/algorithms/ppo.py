@@ -29,6 +29,8 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
 import torch
+import torch.nn as nn
+import torch.optim as optim
 
 from rsl_rl.algorithms import PPO
 from rsl_rl.modules import ActorCritic
@@ -262,5 +264,68 @@ class RolloutStorage:
 
 
 class PPOV2(PPO):
+    def __init__(self, warmup_steps, weight_decay, betas, **kwargs):
+        super().__init__(**kwargs)
+        self.optimizer = optim.AdamW(self.actor_critic.parameters(), lr=self.learning_rate, weight_decay=weight_decay, betas=betas)
+        if self.schedule == 'decay':
+            self.scheduler = optim.lr_scheduler.LambdaLR(
+                self.optimizer, lambda steps: min((steps + 1) / warmup_steps, 1),
+            )
+
     def init_storage(self, num_envs, num_transitions_per_env, actor_obs_shape, critic_obs_shape, action_shape):
         self.storage = RolloutStorage(num_envs, num_transitions_per_env, actor_obs_shape, critic_obs_shape, action_shape, self.device)
+
+    def update(self):
+        mean_value_loss = 0
+        mean_surrogate_loss = 0
+        if self.actor_critic.is_recurrent:
+            generator = self.storage.reccurent_mini_batch_generator(self.num_mini_batches, self.num_learning_epochs)
+        else:
+            generator = self.storage.mini_batch_generator(self.num_mini_batches, self.num_learning_epochs)
+        for obs_batch, critic_obs_batch, actions_batch, target_values_batch, advantages_batch, returns_batch, old_actions_log_prob_batch, \
+            old_mu_batch, old_sigma_batch, hid_states_batch, masks_batch in generator:
+
+
+                self.actor_critic.act(obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0])
+                actions_log_prob_batch = self.actor_critic.get_actions_log_prob(actions_batch)
+                value_batch = self.actor_critic.evaluate(critic_obs_batch, masks=masks_batch, hidden_states=hid_states_batch[1])
+                mu_batch = self.actor_critic.action_mean
+                sigma_batch = self.actor_critic.action_std
+                entropy_batch = self.actor_critic.entropy
+
+                # Surrogate loss
+                ratio = torch.exp(actions_log_prob_batch - torch.squeeze(old_actions_log_prob_batch))
+                surrogate = -torch.squeeze(advantages_batch) * ratio
+                surrogate_clipped = -torch.squeeze(advantages_batch) * torch.clamp(ratio, 1.0 - self.clip_param,
+                                                                                1.0 + self.clip_param)
+                surrogate_loss = torch.max(surrogate, surrogate_clipped).mean()
+
+                # Value function loss
+                if self.use_clipped_value_loss:
+                    value_clipped = target_values_batch + (value_batch - target_values_batch).clamp(-self.clip_param,
+                                                                                                    self.clip_param)
+                    value_losses = (value_batch - returns_batch).pow(2)
+                    value_losses_clipped = (value_clipped - returns_batch).pow(2)
+                    value_loss = torch.max(value_losses, value_losses_clipped).mean()
+                else:
+                    value_loss = (returns_batch - value_batch).pow(2).mean()
+
+                loss = surrogate_loss + self.value_loss_coef * value_loss - self.entropy_coef * entropy_batch.mean()
+
+                # Gradient step
+                self.optimizer.zero_grad()
+                loss.backward()
+                nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
+                self.optimizer.step()
+                if self.schedule == 'decay':
+                    self.scheduler.step()
+
+                mean_value_loss += value_loss.item()
+                mean_surrogate_loss += surrogate_loss.item()
+
+        num_updates = self.num_learning_epochs * self.num_mini_batches
+        mean_value_loss /= num_updates
+        mean_surrogate_loss /= num_updates
+        self.storage.clear()
+
+        return mean_value_loss, mean_surrogate_loss

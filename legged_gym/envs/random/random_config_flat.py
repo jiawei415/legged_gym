@@ -44,10 +44,6 @@ class RandomFlatCfg( RandomCfg ):
         measure_heights = False
 
 class RandomFlatCfgPPO( RandomCfgPPO ):
-    class algorithm( RandomCfgPPO.algorithm ):
-        entropy_coef = 0.01 * 1.0
-        learning_rate = 1.e-3 * 1.0
-
     class runner( RandomCfgPPO.runner ):
         experiment_name = 'random_flat'
         max_iterations = 3000
