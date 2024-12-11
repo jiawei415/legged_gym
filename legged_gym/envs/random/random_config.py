@@ -210,25 +210,26 @@ class RandomCfg( LeggedRobotCfg ):
 
 class RandomCfgPPO( LeggedRobotCfgPPO ):
     class policy ( LeggedRobotCfgPPO.policy ):
+        init_noise_std = 1.0
         # hyperparameters for the mlp
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]
         # hyperparameters for the transformer
         shared_backbone = False
         embedding_dim = 64
-        mlp_embedding = False
+        mlp_embedding = True
         mlp_prediction = True
         num_layers = 3
         num_heads = 1
 
     class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.01 * 0.1
+        entropy_coef = 0.01 * 1.0
         learning_rate = 1.e-3 * 1.0
         warmup_steps = 10000
         weight_decay = 1e-4
         betas = (0.9, 0.999)
         num_learning_epochs = 10
-        schedule = 'decay' # could be adaptive, fixed
+        schedule = 'fixed' # could be adaptive, fixed
 
     class runner( LeggedRobotCfgPPO.runner ):
         # policy_class_name = 'MLPAC'

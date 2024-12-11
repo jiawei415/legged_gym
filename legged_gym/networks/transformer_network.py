@@ -50,10 +50,10 @@ class ResidualBlock(nn.Module):
 
 
 class MLPBlock(nn.Module):
-    def __init__(self, dim1, dim2, hidden):
+    def __init__(self, dim1, dim2, hidden, activation='elu'):
         super().__init__()
         self.fc1 = torch.nn.Linear(dim1, hidden)
-        self.activation = nn.GELU()
+        self.activation = get_activation(activation)
         self.fc2 = torch.nn.Linear(hidden, dim2)
     def forward(self, x):
         out = self.fc1(x)
@@ -244,12 +244,12 @@ class Transformer(nn.Module):
 
 
 class Actor(nn.Module):
-    def __init__(self, process_net: nn.Module, mlp_prediction: str = False):
+    def __init__(self, process_net: nn.Module, mlp_prediction: bool = False, activation: str = 'elu'):
         super().__init__()
         self.process_net = process_net
         embedding_dim = process_net.embedding_dim
         if mlp_prediction:
-            self.action_head = MLPBlock(embedding_dim, 1, embedding_dim)
+            self.action_head = MLPBlock(embedding_dim, 1, embedding_dim, activation)
         else:
             self.action_head = nn.Linear(embedding_dim, 1)
 
@@ -261,12 +261,12 @@ class Actor(nn.Module):
 
 
 class Critic(nn.Module):
-    def __init__(self, process_net: nn.Module, mlp_prediction: str = False):
+    def __init__(self, process_net: nn.Module, mlp_prediction: bool = False, activation: str = 'elu'):
         super().__init__()
         self.process_net = process_net
         embedding_dim = process_net.embedding_dim
         if mlp_prediction:
-            self.value_head = MLPBlock(embedding_dim, 1, embedding_dim)
+            self.value_head = MLPBlock(embedding_dim, 1, embedding_dim, activation)
         else:
             self.value_head = nn.Linear(embedding_dim, 1)
 
@@ -299,13 +299,13 @@ class TransformerAC(nn.Module):
         process_net = Transformer(actor_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
 
         # Policy
-        self.actor = Actor(process_net, mlp_prediction)
+        self.actor = Actor(process_net, mlp_prediction, activation)
         # self.actor = Transformer(actor_obs_shape)
 
         # Value function
         if not shared_backbone:
             process_net = Transformer(critic_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
-        self.critic = Critic(process_net, mlp_prediction)
+        self.critic = Critic(process_net, mlp_prediction, activation)
         # self.critic = Transformer(critic_obs_shape, output_value=True)
 
         # Action noise
@@ -317,13 +317,21 @@ class TransformerAC(nn.Module):
         # seems that we get better performance without init
         # self.init_memory_weights(self.memory_a, 0.001, 0.)
         # self.init_memory_weights(self.memory_c, 0.001, 0.)
+        self.actor.action_head.apply(self._init_weights)
+        self.critic.value_head.apply(self._init_weights)
+
+    # @staticmethod
+    # not used at the moment
+    # def init_weights(sequential, scales):
+    #     [torch.nn.init.orthogonal_(module.weight, gain=scales[idx]) for idx, module in
+    #      enumerate(mod for mod in sequential if isinstance(mod, nn.Linear))]
 
     @staticmethod
-    # not used at the moment
-    def init_weights(sequential, scales):
-        [torch.nn.init.orthogonal_(module.weight, gain=scales[idx]) for idx, module in
-         enumerate(mod for mod in sequential if isinstance(mod, nn.Linear))]
-
+    def _init_weights(module: nn.Module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.orthogonal_(module.weight, gain=1.0)
+            if isinstance(module, nn.Linear) and module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
 
     def reset(self, dones=None):
         pass

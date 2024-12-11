@@ -43,6 +43,8 @@ class MLP(nn.Module):
             print("MLP.__init__ got unexpected arguments, which will be ignored: " + str([key for key in kwargs.keys()]))
         super(MLP, self).__init__()
 
+        activation = get_activation(activation)
+
         layers = []
         layers.append(nn.Linear(input_dim, hidden_dims[0]))
         layers.append(activation)
@@ -73,8 +75,6 @@ class MLPAC(nn.Module):
         if kwargs:
             print("MLPAC.__init__ got unexpected arguments, which will be ignored: " + str([key for key in kwargs.keys()]))
         super(MLPAC, self).__init__()
-
-        activation = get_activation(activation)
 
         mlp_input_dim_a = np.sum([np.prod(val) for val in actor_obs_shape.values()])
         mlp_input_dim_c = np.sum([np.prod(val) for val in critic_obs_shape.values()])
