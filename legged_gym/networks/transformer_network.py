@@ -125,6 +125,7 @@ class Transformer(nn.Module):
         attention_dropout: float = 0.1,
         residual_dropout: float = 0.1,
         embedding_dropout: float = 0.1,
+        enable_pos_embed: bool = True,
     ):
         super().__init__()
         seq_len = state_shape['link_obs'][0] + 2
@@ -165,6 +166,7 @@ class Transformer(nn.Module):
 
         self.seq_len = seq_len
         self.embedding_dim = embedding_dim
+        self.enable_pos_embed = enable_pos_embed
 
         self.apply(self._init_weights)
 
@@ -228,8 +230,9 @@ class Transformer(nn.Module):
         root_emb = self.root_emb(root_obs).unsqueeze(1)
         cmd_emb = self.cmd_emb(cmd_obs).unsqueeze(1)
         state_emb = torch.cat([cmd_emb, root_emb, link_emb], dim=1)
-        state_pos = self.positional_embedding(state_emb)
-        state_emb = state_emb + state_pos
+        if self.enable_pos_embed:
+            state_pos = self.positional_embedding(state_emb)
+            state_emb = state_emb + state_pos
 
         # LayerNorm and Dropout (!!!) as in original implementation,
         # while minGPT & huggingface uses only embedding dropout
@@ -288,6 +291,7 @@ class TransformerAC(nn.Module):
                         shared_backbone=True,
                         mlp_embedding=False,
                         mlp_prediction=False,
+                        enable_pos_embed=True,
                         activation='elu',
                         init_noise_std=1.0,
                         **kwargs):
@@ -296,7 +300,8 @@ class TransformerAC(nn.Module):
         super(TransformerAC, self).__init__()
 
         # activation = get_activation(activation)
-        process_net = Transformer(actor_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
+        process_net = Transformer(
+            actor_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding, enable_pos_embed=enable_pos_embed)
 
         # Policy
         self.actor = Actor(process_net, mlp_prediction, activation)
