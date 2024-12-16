@@ -3,10 +3,9 @@ set -e
 set -u
 
 task_name=$1
-time_id=$2
-run_id=$3
+run_name=$2
 
-filePath="/apdcephfs_cq10/share_1150325/ztjiaweixu/legged_cq/${task_name}/${time_id}_${run_id}"
+filePath="/apdcephfs_cq10/share_1150325/ztjiaweixu/legged_cq/${task_name}/${run_name}"
 
 last_file=$(ls -1 "$filePath" | grep .pt | tail -n 1)
 ft put $filePath/$last_file
