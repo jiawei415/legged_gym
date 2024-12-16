@@ -154,11 +154,12 @@ class TaskRegistry():
 
         if log_root=="default":
             log_root = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name)
-            log_dir = os.path.join(log_root, datetime.now().strftime('%Y%m%d') + '_' + train_cfg.runner.run_name)
+            # log_dir = os.path.join(log_root, datetime.now().strftime('%Y%m%d') + '_' + train_cfg.runner.run_name)
+            log_dir = os.path.join(log_root, train_cfg.runner.run_name)
         elif log_root is None:
             log_dir = None
         else:
-            log_dir = os.path.join(log_root, datetime.now().strftime('%Y%m%d') + '_' + train_cfg.runner.run_name)
+            log_dir = os.path.join(log_root, train_cfg.runner.run_name)
         self.log_dir = log_dir
         
         train_cfg_dict = class_to_dict(train_cfg)

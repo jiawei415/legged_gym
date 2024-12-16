@@ -29,12 +29,30 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
 import os
+import git
 import copy
 import torch
 import numpy as np
 import random
 from isaacgym import gymapi
 from isaacgym import gymutil
+
+
+def get_raw_cmdline():
+    with open("/proc/self/cmdline") as f:
+        x = f.readlines()
+    if x is None or len(x) == 0:
+        return None
+    return x[0].replace("\x00", " ")
+
+
+def add_git_and_cmd_line_info(args):
+    args.raw_cmdline = get_raw_cmdline()
+    try:
+        args.git_version = git.Repo().head.object.hexsha
+    except Exception:
+        print("No git info detected")
+    return args
 
 
 def to_str_dict(input_dict):
@@ -183,6 +201,8 @@ def get_args():
     args = gymutil.parse_arguments(
         description="RL Policy",
         custom_parameters=custom_parameters)
+
+    args = add_git_and_cmd_line_info(args)
 
     # name allignment
     args.sim_device_id = args.compute_device_id
