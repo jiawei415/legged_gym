@@ -46,4 +46,4 @@ class RandomFlatCfg( RandomCfg ):
 class RandomFlatCfgPPO( RandomCfgPPO ):
     class runner( RandomCfgPPO.runner ):
         experiment_name = 'random_flat'
-        max_iterations = 3000
+        max_iterations = 10000

@@ -202,6 +202,13 @@ class RandomCfg( LeggedRobotCfg ):
         class scales( LeggedRobotCfg.rewards.scales ):
             torques = -0.0002
             dof_pos_limits = -10.0
+            action_rate = -0.01 * 1.0
+            ang_vel_xy = -0.05 * 1.0
+            lin_vel_z = -2.0 * 1.0
+            dof_acc = -2.5e-7 * 1.0
+            feet_air_time =  1.0 * 1.0
+            tracking_lin_vel = 1.0 * 1.0
+            tracking_ang_vel = 0.5 * 1.0
 
     # class viewer:
     #     ref_env = 0
@@ -224,7 +231,7 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         num_heads = 1
 
     class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.01 * 1.0
+        entropy_coef = 0.01 * 0.1
         learning_rate = 1.e-3 * 1.0
         warmup_steps = 10000
         weight_decay = 1e-4
