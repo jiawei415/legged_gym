@@ -231,17 +231,17 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         num_heads = 1
 
     class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.01 * 0.1
+        entropy_coef = 0.01 * 1.0
         learning_rate = 1.e-3 * 1.0
         warmup_steps = 10000
         weight_decay = 1e-4
         betas = (0.9, 0.999)
         num_learning_epochs = 10
-        schedule = 'fixed' # could be adaptive, fixed
+        schedule = 'adaptive' # could be adaptive, fixed, decay
 
     class runner( LeggedRobotCfgPPO.runner ):
-        # policy_class_name = 'MLPAC'
-        policy_class_name = 'TransformerAC'
+        policy_class_name = 'MLPAC'
+        # policy_class_name = 'TransformerAC'
         algorithm_class_name = 'PPOV2'
         run_name = ''
         experiment_name = 'random'
