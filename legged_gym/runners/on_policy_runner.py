@@ -37,6 +37,7 @@ from torch.utils.tensorboard import SummaryWriter
 import torch
 
 from rsl_rl.env import VecEnv
+from rsl_rl.modules import ActorCritic
 
 from legged_gym.networks import MLPAC, TransformerAC
 from legged_gym.algorithms import PPO, PPOV2
@@ -64,7 +65,10 @@ class OnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.device = device
         self.env = env
-        actor_obs_shape = self.env.obs_shape_dict
+        if hasattr(self.env, 'obs_shape_dict'):
+            actor_obs_shape = self.env.obs_shape_dict
+        else:
+            actor_obs_shape = self.env.num_obs
         if self.env.num_privileged_obs is not None:
             critic_obs_shape = self.env.num_privileged_obs
         else:
@@ -81,7 +85,10 @@ class OnPolicyRunner:
         self.save_interval = self.cfg["save_interval"]
 
         # init storage and model
-        self.alg.init_storage(self.env.num_envs, self.num_steps_per_env, self.env.obs_shape_dict, self.env.privileged_obs_shape_dict, [self.env.num_actions])
+        if self.cfg["algorithm_class_name"] == 'PPO':
+            self.alg.init_storage(self.env.num_envs, self.num_steps_per_env, [self.env.num_obs], [self.env.num_privileged_obs], [self.env.num_actions])
+        elif self.cfg["algorithm_class_name"] == 'PPOV2':
+            self.alg.init_storage(self.env.num_envs, self.num_steps_per_env, self.env.obs_shape_dict, self.env.privileged_obs_shape_dict, [self.env.num_actions])
 
         # Log
         self.log_dir = log_dir
