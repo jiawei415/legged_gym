@@ -38,6 +38,7 @@ class RandomCfg( LeggedRobotCfg ):
         robot_names = ['a1', 'go2', 'max', 'aliengo', 'laikago', 'cheetah']
         # robot_names = ['a1', 'go2']
         use_offset = True
+        use_id = True
     
     class init_state( LeggedRobotCfg.init_state ):
         # x,y,z [m]
@@ -218,6 +219,8 @@ class RandomCfg( LeggedRobotCfg ):
 class RandomCfgPPO( LeggedRobotCfgPPO ):
     class policy ( LeggedRobotCfgPPO.policy ):
         init_noise_std = 1.0
+        # hyperparameters for the hyper
+        hyper_hidden_dims = []
         # hyperparameters for the mlp
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]
@@ -240,6 +243,7 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         # schedule = 'adaptive' # could be adaptive, fixed, decay
 
     class runner( LeggedRobotCfgPPO.runner ):
+        # policy_class_name = 'HyperMLPAC'
         policy_class_name = 'MLPAC'
         # policy_class_name = 'TransformerAC'
         algorithm_class_name = 'PPOV2'

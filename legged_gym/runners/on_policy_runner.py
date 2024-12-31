@@ -39,7 +39,7 @@ import torch
 from rsl_rl.env import VecEnv
 from rsl_rl.modules import ActorCritic
 
-from legged_gym.networks import MLPAC, TransformerAC
+from legged_gym.networks import MLPAC, TransformerAC, HyperMLPAC
 from legged_gym.algorithms import PPO, PPOV2
 
 
@@ -65,6 +65,7 @@ class OnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.device = device
         self.env = env
+        num_robots = getattr(env, 'num_robots', 1)
         if hasattr(self.env, 'obs_shape_dict'):
             actor_obs_shape = self.env.obs_shape_dict
         else:
@@ -74,10 +75,12 @@ class OnPolicyRunner:
         else:
             critic_obs_shape = actor_obs_shape
         actor_critic_class = eval(self.cfg["policy_class_name"])
-        actor_critic: MLPAC = actor_critic_class( actor_obs_shape,
-                                                        critic_obs_shape,
-                                                        self.env.num_actions,
-                                                        **self.policy_cfg).to(self.device)
+        actor_critic: MLPAC = actor_critic_class(
+            actor_obs_shape,
+            critic_obs_shape,
+            self.env.num_actions,
+            num_ids=num_robots,
+            **self.policy_cfg).to(self.device)
         print(f"Network:\n{actor_critic}")
         alg_class = eval(self.cfg["algorithm_class_name"])
         self.alg: PPOV2 = alg_class(actor_critic=actor_critic, device=self.device, **self.alg_cfg)

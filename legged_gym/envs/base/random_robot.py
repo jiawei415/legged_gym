@@ -67,6 +67,7 @@ class RandomRobot(BaseTask):
         self.height_samples = None
         self.debug_viz = False
         self.init_done = False
+        self.num_robots = len(self.cfg.env.robot_names)
         self._parse_cfg(self.cfg)
         super().__init__(self.cfg, sim_params, physics_engine, sim_device, headless)
 
@@ -77,6 +78,8 @@ class RandomRobot(BaseTask):
         }
         if self.cfg.env.use_offset:
             self.obs_shape_dict["offset"] = (self.num_dof, 3)
+        if self.cfg.env.use_id:
+            self.obs_shape_dict["ids"] = (1,)
         if self.cfg.terrain.measure_heights:
             self.obs_shape_dict["map_obs"] = (187,)
         self.obs_dict = {key: torch.zeros((self.num_envs, *val), device=self.device) for key, val in self.obs_shape_dict.items()}
@@ -116,6 +119,8 @@ class RandomRobot(BaseTask):
         # return clipped obs, clipped states (None), rewards, dones and infos
         clip_obs = self.cfg.normalization.clip_observations
         self.obs_dict = {key: torch.clip(val, -clip_obs, clip_obs) for key, val in self.obs_dict.items()}
+        if self.cfg.env.use_id:
+            self.obs_dict.update({"ids": self.robot_ids.unsqueeze(-1).float()})
         if self.privileged_obs_dict is not None:
             self.privileged_obs_dict = {key: torch.clip(val, -clip_obs, clip_obs) for key, val in self.privileged_obs_dict.items()}
         # time.sleep(2)
@@ -754,8 +759,10 @@ class RandomRobot(BaseTask):
         total_body_num = 0
         feet_indices, penalised_contact_indices, termination_contact_indices = [], [], []
         link_indices = []
+        robot_ids = []
         for i in range(self.num_envs):
             robot_name = np.random.choice(self.cfg.env.robot_names)
+            robot_ids.append(self.cfg.env.robot_names.index(robot_name))
             self.robot_names.append(robot_name)
             print(f"Creating environment {i} with robot {robot_name}")
 
@@ -797,6 +804,7 @@ class RandomRobot(BaseTask):
 
             total_body_num  += len(body_names)
 
+        self.robot_ids = torch.tensor(robot_ids, dtype=torch.long, device=self.device, requires_grad=False)
         self.feet_indices = torch.tensor(feet_indices, dtype=torch.long, device=self.device, requires_grad=False)
         self.penalised_contact_indices = torch.tensor(penalised_contact_indices, dtype=torch.long, device=self.device, requires_grad=False)
         self.termination_contact_indices = torch.tensor(termination_contact_indices, dtype=torch.long, device=self.device, requires_grad=False)

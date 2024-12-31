@@ -29,4 +29,5 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
 from .mlp_network import MLPAC
+from .hyper_mlp import HyperMLPAC
 from .transformer_network import TransformerAC
