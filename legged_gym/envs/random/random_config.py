@@ -202,13 +202,13 @@ class RandomCfg( LeggedRobotCfg ):
         class scales( LeggedRobotCfg.rewards.scales ):
             torques = -0.0002
             dof_pos_limits = -10.0
-            action_rate = -0.01 * 1.0
-            ang_vel_xy = -0.05 * 1.0
-            lin_vel_z = -2.0 * 1.0
-            dof_acc = -2.5e-7 * 1.0
-            feet_air_time =  1.0 * 1.0
-            tracking_lin_vel = 1.0 * 1.0
-            tracking_ang_vel = 0.5 * 1.0
+            # action_rate = -0.01 * 1.0
+            # ang_vel_xy = -0.05 * 1.0
+            # lin_vel_z = -2.0 * 1.0
+            # dof_acc = -2.5e-7 * 1.0
+            # feet_air_time =  1.0 * 1.0
+            # tracking_lin_vel = 1.0 * 1.0
+            # tracking_ang_vel = 0.5 * 1.0
 
     # class viewer:
     #     ref_env = 0
@@ -236,8 +236,8 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         warmup_steps = 10000
         weight_decay = 1e-4
         betas = (0.9, 0.999)
-        num_learning_epochs = 10
-        schedule = 'adaptive' # could be adaptive, fixed, decay
+        # num_learning_epochs = 10
+        # schedule = 'adaptive' # could be adaptive, fixed, decay
 
     class runner( LeggedRobotCfgPPO.runner ):
         policy_class_name = 'MLPAC'
