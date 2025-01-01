@@ -38,7 +38,7 @@ class RandomCfg( LeggedRobotCfg ):
         robot_names = ['a1', 'go2', 'max', 'aliengo', 'laikago', 'cheetah']
         # robot_names = ['a1', 'go2']
         use_offset = True
-        use_id = True
+        use_id = False
     
     class init_state( LeggedRobotCfg.init_state ):
         # x,y,z [m]

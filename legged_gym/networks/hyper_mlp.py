@@ -87,7 +87,7 @@ class HyperMLP(nn.Module):
         self.params = nn.Sequential(*layers)
 
     def forward(self, x):
-        ids = x['ids'].long()
+        ids = x['ids'].squeeze(-1).long()
         if isinstance(x, dict):
             x = torch.cat([v.flatten(1) for k, v in x.items() if "ids" not in k], dim=-1)
         feature = self.feature(x)
