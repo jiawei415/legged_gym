@@ -77,13 +77,13 @@ class HyperMLP(nn.Module):
             layers.append(activation)
         self.feature = nn.Sequential(*layers)
 
-        self.embed = nn.Embedding(num_ids, self.hidden_dim)
+        self.embed = nn.Embedding(num_ids, hyper_hidden_dims[0])
         layers = []
-        hyper_hidden_dims = [self.hidden_dim] + hyper_hidden_dims + [self.output_dim * self.hidden_dim + self.output_dim]
+        hyper_hidden_dims = hyper_hidden_dims
         for l in range(len(hyper_hidden_dims) - 1):
             layers.append(nn.Linear(hyper_hidden_dims[l], hyper_hidden_dims[l + 1]))
-            if l < len(hyper_hidden_dims) - 2:
-                layers.append(activation)
+            layers.append(activation)
+        layers.append(nn.Linear(hyper_hidden_dims[-1], output_dim * self.hidden_dim + output_dim))
         self.params = nn.Sequential(*layers)
 
     def forward(self, x):
@@ -128,7 +128,7 @@ class HyperMLPAC(nn.Module):
         # print(f"Critic MLP: {self.critic}")
 
         # Action noise
-        self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
+        self.std = nn.Parameter(init_noise_std * torch.ones((num_ids, num_actions)))
         self.distribution = None
         # disable args validation for speedup
         Normal.set_default_validate_args = False
@@ -164,7 +164,9 @@ class HyperMLPAC(nn.Module):
 
     def update_distribution(self, observations):
         mean = self.actor(observations)
-        self.distribution = Normal(mean, mean*0. + self.std)
+        ids = observations['ids'].squeeze(-1).long()
+        std = self.std[ids]
+        self.distribution = Normal(mean, mean*0. + std)
 
     def act(self, observations, **kwargs):
         self.update_distribution(observations)
