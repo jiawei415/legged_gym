@@ -79,7 +79,6 @@ class HyperMLP(nn.Module):
 
         self.embed = nn.Embedding(num_ids, hyper_hidden_dims[0])
         layers = []
-        hyper_hidden_dims = hyper_hidden_dims
         for l in range(len(hyper_hidden_dims) - 1):
             layers.append(nn.Linear(hyper_hidden_dims[l], hyper_hidden_dims[l + 1]))
             layers.append(activation)
@@ -122,7 +121,8 @@ class HyperMLPAC(nn.Module):
         self.actor = HyperMLP(mlp_input_dim_a, num_actions, num_ids, actor_hidden_dims, hyper_hidden_dims, activation)
 
         # Value function
-        self.critic = MLP(mlp_input_dim_c, 1, critic_hidden_dims, activation)
+        # self.critic = MLP(mlp_input_dim_c, 1, critic_hidden_dims, activation)
+        self.critic = HyperMLP(mlp_input_dim_c, 1, num_ids, critic_hidden_dims, hyper_hidden_dims, activation)
 
         # print(f"Actor MLP: {self.actor}")
         # print(f"Critic MLP: {self.critic}")
