@@ -225,6 +225,8 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]
         # hyperparameters for the transformer
+        actor_token_type = 'last'
+        critic_token_type = 'last'
         enable_pos_embed = True
         shared_backbone = False
         embedding_dim = 64

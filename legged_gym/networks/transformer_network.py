@@ -247,24 +247,50 @@ class Transformer(nn.Module):
 
 
 class Actor(nn.Module):
-    def __init__(self, process_net: nn.Module, mlp_prediction: bool = False, activation: str = 'elu'):
+    def __init__(
+        self,
+        process_net: nn.Module,
+        action_dim: int,
+        mlp_prediction: bool = False,
+        activation: str = 'elu',
+        token_type: str = 'last',
+    ):
         super().__init__()
         self.process_net = process_net
         embedding_dim = process_net.embedding_dim
+        output_dim = action_dim if token_type != 'all' else 1
         if mlp_prediction:
-            self.action_head = MLPBlock(embedding_dim, 1, embedding_dim, activation)
+            self.action_head = MLPBlock(embedding_dim, output_dim, embedding_dim, activation)
         else:
-            self.action_head = nn.Linear(embedding_dim, 1)
+            self.action_head = nn.Linear(embedding_dim, output_dim)
+        self.token_type = token_type
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
+        if self.token_type == 'last':
+            feature = feature[:, -1]
+        elif self.token_type == 'mean':
+            feature = torch.mean(feature, dim=1)
+        elif self.token_type == 'sum':
+            feature = torch.sum(feature, dim=1)
+        elif self.token_type == 'all':
+            feature = feature
+        else:
+            raise ValueError(f"Unknown token_type: {self.token_type}")
         out = self.action_head(feature)
-        out = out.squeeze(-1)
+        if self.token_type == 'all':
+            out = out.squeeze(-1)
         return out
 
 
 class Critic(nn.Module):
-    def __init__(self, process_net: nn.Module, mlp_prediction: bool = False, activation: str = 'elu'):
+    def __init__(
+        self,
+        process_net: nn.Module,
+        mlp_prediction: bool = False,
+        activation: str = 'elu',
+        token_type: str = 'last',
+    ):
         super().__init__()
         self.process_net = process_net
         embedding_dim = process_net.embedding_dim
@@ -272,11 +298,23 @@ class Critic(nn.Module):
             self.value_head = MLPBlock(embedding_dim, 1, embedding_dim, activation)
         else:
             self.value_head = nn.Linear(embedding_dim, 1)
+        self.token_type = token_type
 
     def forward(self, states: Dict[str, torch.Tensor]) -> torch.FloatTensor:
         feature = self.process_net(states)
-        feature = feature[:, -1, :]
+        if self.token_type == 'last':
+            feature = feature[:, -1]
+        elif self.token_type == 'mean':
+            feature = torch.mean(feature, dim=1)
+        elif self.token_type == 'sum':
+            feature = torch.sum(feature, dim=1)
+        elif self.token_type == 'all':
+            feature = feature
+        else:
+            raise ValueError(f"Unknown token_type: {self.token_type}")
         out = self.value_head(feature)
+        if self.token_type == 'all':
+            out = torch.mean(out, dim=1)
         return out
 
 
@@ -292,6 +330,8 @@ class TransformerAC(nn.Module):
                         mlp_embedding=False,
                         mlp_prediction=False,
                         enable_pos_embed=True,
+                        actor_token_type='last',
+                        critic_token_type='last',
                         activation='elu',
                         init_noise_std=1.0,
                         **kwargs):
@@ -304,13 +344,13 @@ class TransformerAC(nn.Module):
             actor_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding, enable_pos_embed=enable_pos_embed)
 
         # Policy
-        self.actor = Actor(process_net, mlp_prediction, activation)
+        self.actor = Actor(process_net, num_actions, mlp_prediction, activation, actor_token_type)
         # self.actor = Transformer(actor_obs_shape)
 
         # Value function
         if not shared_backbone:
             process_net = Transformer(critic_obs_shape, num_layers, num_heads, embedding_dim, mlp_embedding)
-        self.critic = Critic(process_net, mlp_prediction, activation)
+        self.critic = Critic(process_net, mlp_prediction, activation, critic_token_type)
         # self.critic = Transformer(critic_obs_shape, output_value=True)
 
         # Action noise
