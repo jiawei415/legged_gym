@@ -221,6 +221,9 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         init_noise_std = 1.0
         # hyperparameters for the hyper
         hyper_hidden_dims = [256]
+        hyper_actor_mean = True
+        hyper_actor_std = False
+        hyper_critic = False
         # hyperparameters for the mlp
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]

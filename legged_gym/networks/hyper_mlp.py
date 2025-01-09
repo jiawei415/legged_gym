@@ -84,6 +84,15 @@ class HyperMLP(nn.Module):
             layers.append(activation)
         layers.append(nn.Linear(hyper_hidden_dims[-1], output_dim * self.hidden_dim + output_dim))
         self.params = nn.Sequential(*layers)
+        self.apply(self.reset_parameter)
+
+    @staticmethod
+    def reset_parameter(module):
+        if isinstance(module, nn.Linear):
+            nn.init.orthogonal_(module.weight, gain=1.0)
+            nn.init.constant_(module.bias, 0.0)
+        elif isinstance(module, nn.Embedding):
+            nn.init.xavier_normal_(module.weight)
 
     def forward(self, x):
         ids = x['ids'].squeeze(-1).long()
@@ -107,6 +116,9 @@ class HyperMLPAC(nn.Module):
                         actor_hidden_dims=[256, 256, 256],
                         critic_hidden_dims=[256, 256, 256],
                         hyper_hidden_dims=[256],
+                        hyper_actor_mean=True,
+                        hyper_actor_std=True,
+                        hyper_critic=True,
                         activation='elu',
                         init_noise_std=1.0,
                         **kwargs):
@@ -118,17 +130,25 @@ class HyperMLPAC(nn.Module):
         mlp_input_dim_c = np.sum([np.prod(val) for key, val in critic_obs_shape.items() if "ids" not in key])
 
         # Policy
-        self.actor = HyperMLP(mlp_input_dim_a, num_actions, num_ids, actor_hidden_dims, hyper_hidden_dims, activation)
+        if hyper_actor_mean:
+            self.actor = HyperMLP(mlp_input_dim_a, num_actions, num_ids, actor_hidden_dims, hyper_hidden_dims, activation)
+        else:
+            self.actor = MLP(mlp_input_dim_a, num_actions, actor_hidden_dims, activation)
 
         # Value function
-        # self.critic = MLP(mlp_input_dim_c, 1, critic_hidden_dims, activation)
-        self.critic = HyperMLP(mlp_input_dim_c, 1, num_ids, critic_hidden_dims, hyper_hidden_dims, activation)
+        if hyper_critic:
+            self.critic = HyperMLP(mlp_input_dim_c, 1, num_ids, critic_hidden_dims, hyper_hidden_dims, activation)
+        else:
+            self.critic = MLP(mlp_input_dim_c, 1, critic_hidden_dims, activation)
 
         # print(f"Actor MLP: {self.actor}")
         # print(f"Critic MLP: {self.critic}")
 
         # Action noise
-        self.std = nn.Parameter(init_noise_std * torch.ones((num_ids, num_actions)))
+        if hyper_actor_std:
+            self.std = nn.Parameter(init_noise_std * torch.ones((num_ids, num_actions)))
+        else:
+            self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
         self.distribution = None
         # disable args validation for speedup
         Normal.set_default_validate_args = False
@@ -164,8 +184,11 @@ class HyperMLPAC(nn.Module):
 
     def update_distribution(self, observations):
         mean = self.actor(observations)
-        ids = observations['ids'].squeeze(-1).long()
-        std = self.std[ids]
+        if len(self.std.shape) == 1:
+            std = self.std
+        else:
+            ids = observations['ids'].squeeze(-1).long()
+            std = self.std[ids]
         self.distribution = Normal(mean, mean*0. + std)
 
     def act(self, observations, **kwargs):

@@ -47,5 +47,5 @@ if __name__ == '__main__':
     args = get_args()
     args.headless = True
     args.num_envs = 50
-    args.task = 'random_rough'
+    args.task = 'random_flat'
     train(args)
