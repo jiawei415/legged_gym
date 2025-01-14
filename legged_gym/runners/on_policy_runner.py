@@ -79,7 +79,7 @@ class OnPolicyRunner:
             actor_obs_shape,
             critic_obs_shape,
             self.env.num_actions,
-            num_ids=num_robots,
+            num_robots=num_robots,
             **self.policy_cfg).to(self.device)
         print(f"Network:\n{actor_critic}")
         alg_class = eval(self.cfg["algorithm_class_name"])

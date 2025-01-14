@@ -53,14 +53,14 @@ class MLP(nn.Module):
                 layers.append(activation)
         self.mlp = nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x, hyper_x=None):
         if isinstance(x, dict):
             x = torch.cat([v.flatten(1) for k, v in x.items() if "ids" not in k], dim=-1)
         return self.mlp(x)
 
 
 class HyperMLP(nn.Module):
-    def __init__(self, input_dim, output_dim, num_ids, hidden_dims=[256, 256, 256], hyper_hidden_dims=[256], activation='elu', **kwargs):
+    def __init__(self, input_dim, output_dim, hyper_input_dim, hidden_dims=[256, 256, 256], hyper_hidden_dims=[256], hyper_input='id', activation='elu', **kwargs):
         if kwargs:
             print("MLP.__init__ got unexpected arguments, which will be ignored: " + str([key for key in kwargs.keys()]))
         super(HyperMLP, self).__init__()
@@ -77,7 +77,12 @@ class HyperMLP(nn.Module):
             layers.append(activation)
         self.feature = nn.Sequential(*layers)
 
-        self.embed = nn.Embedding(num_ids, hyper_hidden_dims[0])
+        if hyper_input == "id":
+            self.embed = nn.Embedding(hyper_input_dim, hyper_hidden_dims[0])
+        elif hyper_input == "offset":
+            self.embed = nn.Sequential(
+                nn.Linear(hyper_input_dim, hyper_hidden_dims[0]), activation
+            )
         layers = []
         for l in range(len(hyper_hidden_dims) - 1):
             layers.append(nn.Linear(hyper_hidden_dims[l], hyper_hidden_dims[l + 1]))
@@ -94,12 +99,11 @@ class HyperMLP(nn.Module):
         elif isinstance(module, nn.Embedding):
             nn.init.xavier_normal_(module.weight)
 
-    def forward(self, x):
-        ids = x['ids'].squeeze(-1).long()
+    def forward(self, x, hyper_x):
         if isinstance(x, dict):
-            x = torch.cat([v.flatten(1) for k, v in x.items() if "ids" not in k], dim=-1)
+            x = torch.cat([v.flatten(1) for k, v in x.items()], dim=-1)
         feature = self.feature(x)
-        params = self.params(self.embed(ids))
+        params = self.params(self.embed(hyper_x))
         weights, bias = torch.split(params, [self.output_dim * self.hidden_dim, self.output_dim], dim=-1)
         weights = weights.view(-1, self.output_dim, self.hidden_dim)
         bias = bias.view(-1, self.output_dim)
@@ -112,13 +116,14 @@ class HyperMLPAC(nn.Module):
     def __init__(self,  actor_obs_shape,
                         critic_obs_shape,
                         num_actions,
-                        num_ids,
+                        num_robots,
                         actor_hidden_dims=[256, 256, 256],
                         critic_hidden_dims=[256, 256, 256],
                         hyper_hidden_dims=[256],
                         hyper_actor_mean=True,
-                        hyper_actor_std=True,
-                        hyper_critic=True,
+                        hyper_actor_std=False,
+                        hyper_critic=False,
+                        hyper_input="id",
                         activation='elu',
                         init_noise_std=1.0,
                         **kwargs):
@@ -126,18 +131,30 @@ class HyperMLPAC(nn.Module):
             print("MLPAC.__init__ got unexpected arguments, which will be ignored: " + str([key for key in kwargs.keys()]))
         super(HyperMLPAC, self).__init__()
 
-        mlp_input_dim_a = np.sum([np.prod(val) for key, val in actor_obs_shape.items() if "ids" not in key])
-        mlp_input_dim_c = np.sum([np.prod(val) for key, val in critic_obs_shape.items() if "ids" not in key])
+        hyper_input_dim = num_robots
+        actor_obs_shape = {k: np.prod(v) for k, v in actor_obs_shape.items()}
+        actor_obs_shape.pop('ids')
+        if hyper_input == "offset" and hyper_actor_mean:
+            offset_dim = actor_obs_shape.pop('offset')
+            hyper_input_dim = offset_dim
+        mlp_input_dim_a = np.sum(list(actor_obs_shape.values()))
+
+        critic_obs_shape = {k: np.prod(v) for k, v in critic_obs_shape.items()}
+        critic_obs_shape.pop('ids')
+        if hyper_input == "offset" and hyper_critic:
+            critic_obs_shape.pop('offset')
+        mlp_input_dim_c = np.sum(list(critic_obs_shape.values()))
+
 
         # Policy
         if hyper_actor_mean:
-            self.actor = HyperMLP(mlp_input_dim_a, num_actions, num_ids, actor_hidden_dims, hyper_hidden_dims, activation)
+            self.actor = HyperMLP(mlp_input_dim_a, num_actions, hyper_input_dim, actor_hidden_dims, hyper_hidden_dims, hyper_input, activation)
         else:
             self.actor = MLP(mlp_input_dim_a, num_actions, actor_hidden_dims, activation)
 
         # Value function
         if hyper_critic:
-            self.critic = HyperMLP(mlp_input_dim_c, 1, num_ids, critic_hidden_dims, hyper_hidden_dims, activation)
+            self.critic = HyperMLP(mlp_input_dim_c, 1, hyper_input_dim, critic_hidden_dims, hyper_hidden_dims, hyper_input, activation)
         else:
             self.critic = MLP(mlp_input_dim_c, 1, critic_hidden_dims, activation)
 
@@ -146,12 +163,16 @@ class HyperMLPAC(nn.Module):
 
         # Action noise
         if hyper_actor_std:
-            self.std = nn.Parameter(init_noise_std * torch.ones((num_ids, num_actions)))
+            self.std = nn.Parameter(init_noise_std * torch.ones((num_robots, num_actions)))
         else:
             self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
         self.distribution = None
         # disable args validation for speedup
         Normal.set_default_validate_args = False
+
+        self.hyper_actor_mean = hyper_actor_mean
+        self.hyper_critic = hyper_critic
+        self.hyper_input = hyper_input
         
         # seems that we get better performance without init
         # self.init_memory_weights(self.memory_a, 0.001, 0.)
@@ -183,7 +204,12 @@ class HyperMLPAC(nn.Module):
         return self.distribution.entropy().sum(dim=-1)
 
     def update_distribution(self, observations):
-        mean = self.actor(observations)
+        hyper_x = observations["ids"].squeeze(-1).long()
+        x = {k: v for k, v in observations.items() if k != "ids"}
+        if self.hyper_input == "offset" and self.hyper_actor_mean:
+            hyper_x = observations["offset"].flatten(1)
+            x = {k: v for k, v in x.items() if k != "offset"}
+        mean = self.actor(x, hyper_x)
         if len(self.std.shape) == 1:
             std = self.std
         else:
@@ -199,11 +225,21 @@ class HyperMLPAC(nn.Module):
         return self.distribution.log_prob(actions).sum(dim=-1)
 
     def act_inference(self, observations):
-        actions_mean = self.actor(observations)
+        hyper_x = observations["ids"].squeeze(-1).long()
+        x = {k: v for k, v in observations.items() if k != "ids"}
+        if self.hyper_input == "offset" and self.hyper_actor_mean:
+            hyper_x = observations["offset"].flatten(1)
+            x = {k: v for k, v in x.items() if k != "offset"}
+        actions_mean = self.actor(x, hyper_x)
         return actions_mean
 
     def evaluate(self, critic_observations, **kwargs):
-        value = self.critic(critic_observations)
+        hyper_x = critic_observations["ids"].squeeze(-1).long()
+        x = {k: v for k, v in critic_observations.items() if k != "ids"}
+        if self.hyper_input == "offset" and self.hyper_critic:
+            hyper_x = critic_observations["offset"].flatten(1)
+            x = {k: v for k, v in x.items() if k != "offset"}
+        value = self.critic(x, hyper_x)
         return value
 
 def get_activation(act_name):

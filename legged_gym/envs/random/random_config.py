@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -39,11 +39,11 @@ class RandomCfg( LeggedRobotCfg ):
         # robot_names = ['a1', 'go2']
         use_offset = True
         use_id = False
-    
+
     class init_state( LeggedRobotCfg.init_state ):
         # x,y,z [m]
         pos = {
-            'a1': [0.0, 0.0, 0.42], 
+            'a1': [0.0, 0.0, 0.42],
             'go2': [0.0, 0.0, 0.42],
             'max': [0.0, 0.0, 0.31],
             'aliengo': [0.0, 0.0, 0.50],
@@ -52,21 +52,21 @@ class RandomCfg( LeggedRobotCfg ):
         }
         # = target angles [rad] when action = 0.0
         default_joint_angles = {
-            'a1': { 
+            'a1': {
                 'FL_hip_joint': 0.1,
                 'RL_hip_joint': 0.1,
                 'FR_hip_joint': -0.1,
                 'RR_hip_joint': -0.1,
 
-                'FL_thigh_joint': 0.8,  
+                'FL_thigh_joint': 0.8,
                 'RL_thigh_joint': 1.,
-                'FR_thigh_joint': 0.8,  
+                'FR_thigh_joint': 0.8,
                 'RR_thigh_joint': 1.,
 
                 'FL_calf_joint': -1.5,
-                'RL_calf_joint': -1.5, 
+                'RL_calf_joint': -1.5,
                 'FR_calf_joint': -1.5,
-                'RR_calf_joint': -1.5, 
+                'RR_calf_joint': -1.5,
             },
             'go2': {
                 'FL_hip_joint': 0.1,
@@ -74,17 +74,17 @@ class RandomCfg( LeggedRobotCfg ):
                 'FR_hip_joint': -0.1,
                 'RR_hip_joint': -0.1,
 
-                'FL_thigh_joint': 0.8,  
+                'FL_thigh_joint': 0.8,
                 'RL_thigh_joint': 1.,
-                'FR_thigh_joint': 0.8,  
+                'FR_thigh_joint': 0.8,
                 'RR_thigh_joint': 1.,
 
                 'FL_calf_joint': -1.5,
-                'RL_calf_joint': -1.5, 
+                'RL_calf_joint': -1.5,
                 'FR_calf_joint': -1.5,
-                'RR_calf_joint': -1.5, 
+                'RR_calf_joint': -1.5,
             },
-            'max': { 
+            'max': {
                 'joint_FL1': 0.2,
                 'joint_HL1': 0.2,
                 'joint_FR1': -0.2,
@@ -134,19 +134,19 @@ class RandomCfg( LeggedRobotCfg ):
             },
             'cheetah': {
                 'torso_to_abduct_fr_j': 0.0,
-                'torso_to_abduct_fl_j': 0.0, 
-                'torso_to_abduct_hr_j': 0.0, 
-                'torso_to_abduct_hl_j': 0.0, 
+                'torso_to_abduct_fl_j': 0.0,
+                'torso_to_abduct_hr_j': 0.0,
+                'torso_to_abduct_hl_j': 0.0,
 
-                'abduct_fr_to_thigh_fr_j': -0.67,   
-                'abduct_fl_to_thigh_fl_j': -0.67,   
-                'abduct_hr_to_thigh_hr_j': -0.67, 
-                'abduct_hl_to_thigh_hl_j': -0.67, 
+                'abduct_fr_to_thigh_fr_j': -0.67,
+                'abduct_fl_to_thigh_fl_j': -0.67,
+                'abduct_hr_to_thigh_hr_j': -0.67,
+                'abduct_hl_to_thigh_hl_j': -0.67,
 
                 'thigh_fr_to_knee_fr_j': 1.25,
-                'thigh_fl_to_knee_fl_j': 1.25, 
-                'thigh_hr_to_knee_hr_j': 1.25,  
-                'thigh_hl_to_knee_hl_j': 1.25,  
+                'thigh_fl_to_knee_fl_j': 1.25,
+                'thigh_hr_to_knee_hr_j': 1.25,
+                'thigh_hl_to_knee_hl_j': 1.25,
             }
         }
 
@@ -196,7 +196,7 @@ class RandomCfg( LeggedRobotCfg ):
         # flip_visual_attachments = False
         # fix_base_link = False
         self_collisions = 1
-  
+
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
         base_height_target = 0.25
@@ -224,6 +224,7 @@ class RandomCfgPPO( LeggedRobotCfgPPO ):
         hyper_actor_mean = True
         hyper_actor_std = False
         hyper_critic = False
+        hyper_input = 'id'
         # hyperparameters for the mlp
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [512, 256, 128]
