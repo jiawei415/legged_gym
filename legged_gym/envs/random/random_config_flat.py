@@ -36,6 +36,8 @@ class RandomFlatCfg( RandomCfg ):
         num_observations = 48
         def __init__(self):
             super().__init__()
+            if self.padding_zeros:
+                self.num_observations = 235
             if self.use_offset:
                 self.num_observations += 12 * 3
 
@@ -46,4 +48,4 @@ class RandomFlatCfg( RandomCfg ):
 class RandomFlatCfgPPO( RandomCfgPPO ):
     class runner( RandomCfgPPO.runner ):
         experiment_name = 'random_flat'
-        max_iterations = 5000
+        max_iterations = 3000

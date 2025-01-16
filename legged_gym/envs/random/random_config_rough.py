@@ -45,4 +45,4 @@ class RandomRoughCfgPPO( RandomCfgPPO ):
         learning_rate = 5.e-4
     class runner( RandomCfgPPO.runner ):
         experiment_name = 'random_rough'
-        max_iterations = 5000
+        max_iterations = 10000

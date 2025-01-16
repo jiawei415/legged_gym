@@ -37,6 +37,7 @@ class RandomCfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         robot_names = ['a1', 'go2', 'max', 'aliengo', 'laikago', 'cheetah']
         # robot_names = ['a1', 'go2']
+        padding_zeros = False
         use_offset = True
         use_id = False
 

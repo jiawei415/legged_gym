@@ -80,7 +80,7 @@ class RandomRobot(BaseTask):
             self.obs_shape_dict["offset"] = (self.num_dof, 3)
         if self.cfg.env.use_id:
             self.obs_shape_dict["ids"] = (1,)
-        if self.cfg.terrain.measure_heights:
+        if self.cfg.terrain.measure_heights or self.cfg.env.padding_zeros:
             self.obs_shape_dict["map_obs"] = (187,)
         self.obs_dict = {key: torch.zeros((self.num_envs, *val), device=self.device) for key, val in self.obs_shape_dict.items()}
         self.privileged_obs_shape_dict = None
@@ -256,6 +256,9 @@ class RandomRobot(BaseTask):
             obs_dict.update({"offset": self.offset}) # (num_envs, num_dof, 3)
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements # (num_envs, 187)
+            obs_dict.update({"map_obs": heights})
+        if self.cfg.env.padding_zeros and not self.cfg.terrain.measure_heights:
+            heights = torch.zeros((self.num_envs, 187), device=self.device)
             obs_dict.update({"map_obs": heights})
         # add noise if needed
         if self.add_noise:
